@@ -1,0 +1,3 @@
+[    2197ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[    2428ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[    2429ms] [ERROR] ERROR {message: Unauthorized} @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6

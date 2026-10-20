@@ -25,7 +25,7 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
   2. Abrir el producto desde el catálogo y agregarlo al carrito.
   3. Abrir el carrito y avanzar al checkout como guest.
   4. Completar los datos del guest y la dirección de facturación.
-  5. Elegir método de pago (cash-on-delivery) und confirmar.
+  5. Elegir método de pago (cash-on-delivery) y confirmar.
 - **Esperado:** mensaje de pago exitoso, orden con número de factura, carrito vacío. API de facturas para guest (`/invoices/guest`) responde 201 con `invoice_number`.
 
 ### TC-002: Registro de Cuenta exitoso
