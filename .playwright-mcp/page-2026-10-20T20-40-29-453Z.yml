@@ -1,0 +1,109 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - text: View the
+    - link "Documentation" [ref=e4] [cursor=pointer]:
+      - /url: https://testsmith-io.github.io/practice-software-testing/#/
+    - text: for this application.
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - generic [ref=e8]: Practice Black Box Testing & Bug Hunting
+      - button "Testing Guide" [ref=e9] [cursor=pointer]
+      - button "🐛 Bug Hunting" [ref=e10] [cursor=pointer]
+    - navigation [ref=e24]:
+      - generic [ref=e25]:
+        - link "Practice Software Testing - Toolshop" [ref=e26] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e45]:
+          - menubar "Main menu" [ref=e46]:
+            - menuitem [ref=e47]:
+              - link "Home" [ref=e48] [cursor=pointer]:
+                - /url: /
+            - menuitem [ref=e49]:
+              - button "Categories" [ref=e50] [cursor=pointer]
+            - menuitem [ref=e51]:
+              - link "Contact" [ref=e52] [cursor=pointer]:
+                - /url: /contact
+            - menuitem [ref=e53]:
+              - link "Sign in" [ref=e54] [cursor=pointer]:
+                - /url: /auth/login
+            - menuitem [ref=e190]:
+              - link "cart" [ref=e191] [cursor=pointer]:
+                - /url: /checkout
+                - generic [ref=e195]: "1"
+          - button "Select language" [ref=e56] [cursor=pointer]: EN
+  - generic [ref=e200]:
+    - list [ref=e202]:
+      - listitem [ref=e240]:
+        - generic [ref=e241] [cursor=pointer]:
+          - generic [ref=e242]: Cart
+          - generic [ref=e243]: "1"
+      - listitem:
+        - generic:
+          - generic: Sign in
+          - generic: "2"
+      - listitem:
+        - generic:
+          - generic: Billing Address
+          - generic: "3"
+      - listitem:
+        - generic:
+          - generic: Payment
+          - generic: "4"
+    - generic [ref=e249]:
+      - tablist [ref=e251]:
+        - tab "Sign in" [ref=e253] [cursor=pointer]
+        - tab "Continue as Guest" [selected] [ref=e255] [cursor=pointer]
+      - tabpanel [ref=e272]:
+        - heading "Continue as Guest" [level=3] [ref=e273]
+        - paragraph [ref=e274]: Checkout without creating an account
+        - generic [ref=e275]:
+          - generic [ref=e276]:
+            - generic [ref=e277]: Email address *
+            - textbox "Email address *" [invalid] [ref=e278]:
+              - /placeholder: Your email
+          - generic [ref=e287]: Email is required
+          - generic [ref=e279]:
+            - generic [ref=e280]: First name *
+            - textbox "First name *" [invalid] [ref=e281]:
+              - /placeholder: Your first name
+          - generic [ref=e289]: First name is required
+          - generic [ref=e282]:
+            - generic [ref=e283]: Last name *
+            - textbox "Last name *" [invalid] [ref=e284]:
+              - /placeholder: Your last name
+          - generic [ref=e291]: Last name is required
+          - button "Continue as Guest" [active] [ref=e286] [cursor=pointer]
+  - contentinfo [ref=e157]:
+    - generic [ref=e159]:
+      - generic [ref=e160]: Learn & Explore
+      - generic [ref=e161]:
+        - link "Learn Test Automation Hands-on courses for Playwright, Robot Framework, APIs and more" [ref=e163] [cursor=pointer]:
+          - /url: https://onlinecourses.testsmith.io
+          - generic [ref=e166]:
+            - generic [ref=e167]: Learn Test Automation
+            - text: Hands-on courses for Playwright, Robot Framework, APIs and more
+        - link "API Spector Open-source API testing, mocking and contract testing" [ref=e169] [cursor=pointer]:
+          - /url: https://api-spector.dev
+          - generic [ref=e172]:
+            - generic [ref=e173]: API Spector
+            - text: Open-source API testing, mocking and contract testing
+        - link "GitHub Source code, issues and contributions" [ref=e175] [cursor=pointer]:
+          - /url: https://github.com/testsmith-io/practice-software-testing
+          - generic [ref=e178]:
+            - generic [ref=e179]: GitHub
+            - text: Source code, issues and contributions
+    - generic [ref=e180]:
+      - generic [ref=e181]:
+        - text: This is a DEMO application, used for software testing training purpose. |
+        - link "Privacy Policy" [ref=e182] [cursor=pointer]:
+          - /url: /privacy
+        - text: "| Banner photo by"
+        - link "Barn Images" [ref=e183] [cursor=pointer]:
+          - /url: https://unsplash.com/@barnimages
+        - text: "on"
+        - link "Unsplash" [ref=e184] [cursor=pointer]:
+          - /url: https://unsplash.com/photos/t5YUoHW6zRo
+        - text: .
+      - generic [ref=e185]: v2.5 | Built 2026-10-11 | Angular 20.0.5
+  - button "Open chat" [ref=e187] [cursor=pointer]
+  - button "Show live shop activity" [ref=e19] [cursor=pointer]

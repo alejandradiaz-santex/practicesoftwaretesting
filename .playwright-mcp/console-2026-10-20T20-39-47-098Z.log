@@ -1,0 +1,98 @@
+[    1952ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[    2153ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[    2156ms] [ERROR] ERROR {message: Unauthorized} @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[    3085ms] [LOG] Initializing Google Analytics 4: G-0BJFXRKTYC @ https://practicesoftwaretesting.com/chunk-SS5V56Y4.js:0
+[    3380ms] [LOG] Google Analytics 4 ready for tracking @ https://practicesoftwaretesting.com/chunk-SS5V56Y4.js:0
+[   25295ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   25307ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   25310ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   25314ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   25320ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   26289ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   26291ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   26292ms] [ERROR] ERROR TypeError: Cannot read properties of null (reading 'cart_items')
+    at template (https://practicesoftwaretesting.com/chunk-4MSJTYQJ.js:1:29504)
+    at Vm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:39700)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:48997)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997)
+    at GC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49953)
+    at ev (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50344)
+    at HC (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49352)
+    at rd (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:50165)
+    at Xm (https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:7:49997) @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   26464ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[   26476ms] [ERROR] ERROR {message: Unauthorized} @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[   26543ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ https://practicesoftwaretesting.com/checkout:0
+[   26705ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[   26712ms] [ERROR] ERROR {message: Unauthorized} @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6

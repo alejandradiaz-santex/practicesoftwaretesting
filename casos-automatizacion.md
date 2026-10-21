@@ -39,7 +39,7 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
   4. Ingresar teléfono y email.
   5. Ingresar una contraseña válida.
   6. Hacer clic en Register.
-- **Esperado:** el registro se completa sin errores, el sitio redirige a la pantalla de login y el usuario nuevo puede iniciar sesión con el email y la contraseña registrados.
+- **Esperado:** el registro se completa sin errores y el sitio redirige a la pantalla de login.
 
 ### TC-003: Cantidades y Totales dentro del Carrito
 - **Descripción:** validar el cálculo de subtotal y total, la edición de cantidades y la persistencia del carrito con un producto.
@@ -76,11 +76,11 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
 
 ### TC-005: Checkout con datos inválidos
 - **Descripción:** validar que el checkout rechace datos de dirección o pago inválidos.
-- **Precondiciones:** usuario de prueba con un producto con stock en el carrito.
-- **Datos:** dirección con campos vacíos, código postal inválido, tarjeta inválida o vencida, métodos de pago credit-card y bank-transfer.
+- **Precondiciones:** usuario guest (sin sesión iniciada) con un producto con stock en el carrito.
+- **Datos:** dirección con campos vacíos, código postal inválido, métodos de pago credit-card y bank-transfer con campos vacíos.
 - **Pasos:**
   1. En dirección, dejar campos obligatorios vacíos.
   2. Ingresar un código postal inválido.
-  3. En el pago, elegir credit-card e ingresar una tarjeta inválida o vencida.
-  4. Probar credit-card y bank-transfer con datos incompletos.
-- **Esperado:** los campos obligatorios muestran error por campo y bloquean el avance; la tarjeta inválida rechaza el pago sin crear orden; credit-card y bank-transfer piden sus datos.
+  3. En el pago, elegir credit-card y dejar campos vacíos.
+  4. Ahora elegir bank-transfer y dejar campos vacíos.
+- **Esperado:** los campos obligatorios vacíos bloquean el avance; con un código postal inválido el sitio no muestra error y permite avanzar (posible defecto); credit-card con campos vacíos no confirma el pago (muestra "Unknown error") y no crea orden; bank-transfer con campos vacíos deja el botón de pago deshabilitado.

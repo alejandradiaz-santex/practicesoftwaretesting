@@ -1,0 +1,609 @@
+- generic [ref=f6e2]:
+  - generic [ref=f6e3]:
+    - text: View the
+    - link "Documentation" [ref=f6e4] [cursor=pointer]:
+      - /url: https://testsmith-io.github.io/practice-software-testing/#/
+    - text: for this application.
+  - generic [ref=f6e5]:
+    - generic [ref=f6e7]:
+      - generic [ref=f6e8]: Practice Black Box Testing & Bug Hunting
+      - button "Testing Guide" [ref=f6e9] [cursor=pointer]
+      - button "🐛 Bug Hunting" [ref=f6e10] [cursor=pointer]
+    - navigation [ref=f6e11]:
+      - generic [ref=f6e12]:
+        - link "Practice Software Testing - Toolshop" [ref=f6e13] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f6e32]:
+          - menubar "Main menu" [ref=f6e33]:
+            - menuitem [ref=f6e34]:
+              - link "Home" [ref=f6e35] [cursor=pointer]:
+                - /url: /
+            - menuitem [ref=f6e36]:
+              - button "Categories" [ref=f6e37] [cursor=pointer]
+            - menuitem [ref=f6e38]:
+              - link "Contact" [ref=f6e39] [cursor=pointer]:
+                - /url: /contact
+            - menuitem [ref=f6e40]:
+              - link "Sign in" [ref=f6e41] [cursor=pointer]:
+                - /url: /auth/login
+            - menuitem [ref=f6e42]:
+              - link "cart" [ref=f6e43] [cursor=pointer]:
+                - /url: /checkout
+                - generic [ref=f6e47]: "1"
+          - button "Select language" [ref=f6e49] [cursor=pointer]: EN
+  - generic [ref=f6e54]:
+    - generic [ref=f6e55]:
+      - heading "Practice Software Testing - Toolshop" [level=1] [ref=f6e56]
+      - paragraph [ref=f6e57]:
+        - img "Banner" [ref=f6e58]
+      - separator [ref=f6e59]
+      - generic [ref=f6e60]:
+        - text: Enjoyed testing this app? Level up with hands-on software testing courses.
+        - link "Explore courses" [ref=f6e63] [cursor=pointer]:
+          - /url: https://onlinecourses.testsmith.io/?utm_source=pst&utm_medium=homepage&utm_campaign=app_promo
+    - generic [ref=f6e64]:
+      - generic [ref=f6e65]:
+        - heading [level=4] [ref=f6e66]
+        - separator [ref=f6e70]
+        - combobox "sort" [ref=f6e73]:
+          - option [selected]
+          - option "Name (A - Z)"
+          - option "Name (Z - A)"
+          - option "Price (High - Low)"
+          - option "Price (Low - High)"
+          - option "CO₂ Rating (A - E)"
+          - option "CO₂ Rating (E - A)"
+        - heading [level=4] [ref=f6e74]
+        - separator [ref=f6e78]
+        - generic "ngx-slider" [ref=f6e80]:
+          - slider "ngx-slider" [ref=f6e85] [cursor=pointer]
+          - slider "ngx-slider-max" [ref=f6e86] [cursor=pointer]
+          - generic [ref=f6e87]: "0"
+          - generic [ref=f6e88]: "200"
+          - generic [ref=f6e89]: "1"
+          - generic [ref=f6e90]: "100"
+        - heading [level=4] [ref=f6e92]
+        - separator [ref=f6e96]
+        - generic [ref=f6e98]:
+          - generic [ref=f6e99]: Search
+          - textbox "Search" [active] [ref=f6e100]
+          - button "X" [ref=f6e101] [cursor=pointer]
+          - button "Search" [ref=f6e102] [cursor=pointer]
+        - heading [level=4] [ref=f6e103]
+        - separator [ref=f6e107]
+        - heading "By category:" [level=4] [ref=f6e108]
+        - group "Categories" [ref=f6e210]:
+          - generic [ref=f6e211]:
+            - generic [ref=f6e212]:
+              - checkbox "Hand Tools" [ref=f6e213]
+              - text: Hand Tools
+            - list [ref=f6e214]:
+              - group "Categories" [ref=f6e215]:
+                - generic [ref=f6e218]:
+                  - checkbox "Hammer" [ref=f6e219]
+                  - text: Hammer
+                - generic [ref=f6e221]:
+                  - checkbox "Hand Saw" [ref=f6e222]
+                  - text: Hand Saw
+                - generic [ref=f6e224]:
+                  - checkbox "Wrench" [ref=f6e225]
+                  - text: Wrench
+                - generic [ref=f6e227]:
+                  - checkbox "Screwdriver" [ref=f6e228]
+                  - text: Screwdriver
+                - generic [ref=f6e230]:
+                  - checkbox "Pliers" [ref=f6e231]
+                  - text: Pliers
+                - generic [ref=f6e233]:
+                  - checkbox "Chisels" [ref=f6e234]
+                  - text: Chisels
+                - generic [ref=f6e236]:
+                  - checkbox "Measures" [ref=f6e237]
+                  - text: Measures
+          - generic [ref=f6e238]:
+            - generic [ref=f6e239]:
+              - checkbox "Power Tools" [ref=f6e240]
+              - text: Power Tools
+            - list [ref=f6e241]:
+              - group "Categories" [ref=f6e242]:
+                - generic [ref=f6e245]:
+                  - checkbox "Grinder" [ref=f6e246]
+                  - text: Grinder
+                - generic [ref=f6e248]:
+                  - checkbox "Sander" [ref=f6e249]
+                  - text: Sander
+                - generic [ref=f6e251]:
+                  - checkbox "Saw" [ref=f6e252]
+                  - text: Saw
+                - generic [ref=f6e254]:
+                  - checkbox "Drill" [ref=f6e255]
+                  - text: Drill
+          - generic [ref=f6e256]:
+            - generic [ref=f6e257]:
+              - checkbox "Other" [ref=f6e258]
+              - text: Other
+            - list [ref=f6e259]:
+              - group "Categories" [ref=f6e260]:
+                - generic [ref=f6e263]:
+                  - checkbox "Tool Belts" [ref=f6e264]
+                  - text: Tool Belts
+                - generic [ref=f6e266]:
+                  - checkbox "Storage Solutions" [ref=f6e267]
+                  - text: Storage Solutions
+                - generic [ref=f6e269]:
+                  - checkbox "Workbench" [ref=f6e270]
+                  - text: Workbench
+                - generic [ref=f6e272]:
+                  - checkbox "Safety Gear" [ref=f6e273]
+                  - text: Safety Gear
+                - generic [ref=f6e275]:
+                  - checkbox "Fasteners" [ref=f6e276]
+                  - text: Fasteners
+          - generic [ref=f6e278]:
+            - checkbox "test-category-del401-2f676da7" [ref=f6e279]
+            - text: test-category-del401-2f676da7
+          - generic [ref=f6e281]:
+            - checkbox "patched-category-abffdac8" [ref=f6e282]
+            - text: patched-category-abffdac8
+          - generic [ref=f6e284]:
+            - checkbox "test-category-409-abffdac8" [ref=f6e285]
+            - text: test-category-409-abffdac8
+          - generic [ref=f6e287]:
+            - checkbox "test-category-put-409-abffdac8" [ref=f6e288]
+            - text: test-category-put-409-abffdac8
+          - generic [ref=f6e290]:
+            - checkbox "another-abffdac8" [ref=f6e291]
+            - text: another-abffdac8
+          - generic [ref=f6e293]:
+            - checkbox "test-category-patch-409-abffdac8" [ref=f6e294]
+            - text: test-category-patch-409-abffdac8
+          - generic [ref=f6e296]:
+            - checkbox "another-patch-abffdac8" [ref=f6e297]
+            - text: another-patch-abffdac8
+          - generic [ref=f6e299]:
+            - checkbox "test-category-del-abffdac8" [ref=f6e300]
+            - text: test-category-del-abffdac8
+          - generic [ref=f6e302]:
+            - checkbox "test-category-del401-abffdac8" [ref=f6e303]
+            - text: test-category-del401-abffdac8
+          - generic [ref=f6e305]:
+            - checkbox "patched-category-9cd7a897" [ref=f6e306]
+            - text: patched-category-9cd7a897
+          - generic [ref=f6e308]:
+            - checkbox "test-category-409-9cd7a897" [ref=f6e309]
+            - text: test-category-409-9cd7a897
+          - generic [ref=f6e311]:
+            - checkbox "test-category-put-409-9cd7a897" [ref=f6e312]
+            - text: test-category-put-409-9cd7a897
+          - generic [ref=f6e314]:
+            - checkbox "another-9cd7a897" [ref=f6e315]
+            - text: another-9cd7a897
+          - generic [ref=f6e317]:
+            - checkbox "test-category-patch-409-9cd7a897" [ref=f6e318]
+            - text: test-category-patch-409-9cd7a897
+          - generic [ref=f6e320]:
+            - checkbox "another-patch-9cd7a897" [ref=f6e321]
+            - text: another-patch-9cd7a897
+          - generic [ref=f6e323]:
+            - checkbox "test-category-del401-9cd7a897" [ref=f6e324]
+            - text: test-category-del401-9cd7a897
+          - generic [ref=f6e326]:
+            - checkbox "patched-category-21f4f398" [ref=f6e327]
+            - text: patched-category-21f4f398
+          - generic [ref=f6e329]:
+            - checkbox "test-category-409-21f4f398" [ref=f6e330]
+            - text: test-category-409-21f4f398
+          - generic [ref=f6e332]:
+            - checkbox "test-category-put-409-21f4f398" [ref=f6e333]
+            - text: test-category-put-409-21f4f398
+          - generic [ref=f6e335]:
+            - checkbox "another-21f4f398" [ref=f6e336]
+            - text: another-21f4f398
+          - generic [ref=f6e338]:
+            - checkbox "test-category-patch-409-21f4f398" [ref=f6e339]
+            - text: test-category-patch-409-21f4f398
+          - generic [ref=f6e341]:
+            - checkbox "another-patch-21f4f398" [ref=f6e342]
+            - text: another-patch-21f4f398
+          - generic [ref=f6e344]:
+            - checkbox "test-category-del401-21f4f398" [ref=f6e345]
+            - text: test-category-del401-21f4f398
+          - generic [ref=f6e347]:
+            - checkbox "patched-category-2bcacc99" [ref=f6e348]
+            - text: patched-category-2bcacc99
+          - generic [ref=f6e350]:
+            - checkbox "test-category-409-2bcacc99" [ref=f6e351]
+            - text: test-category-409-2bcacc99
+          - generic [ref=f6e353]:
+            - checkbox "test-category-put-409-2bcacc99" [ref=f6e354]
+            - text: test-category-put-409-2bcacc99
+          - generic [ref=f6e356]:
+            - checkbox "another-2bcacc99" [ref=f6e357]
+            - text: another-2bcacc99
+          - generic [ref=f6e359]:
+            - checkbox "test-category-patch-409-2bcacc99" [ref=f6e360]
+            - text: test-category-patch-409-2bcacc99
+          - generic [ref=f6e362]:
+            - checkbox "another-patch-2bcacc99" [ref=f6e363]
+            - text: another-patch-2bcacc99
+          - generic [ref=f6e365]:
+            - checkbox "test-category-del401-2bcacc99" [ref=f6e366]
+            - text: test-category-del401-2bcacc99
+          - generic [ref=f6e368]:
+            - checkbox "patched-category-e130eb25" [ref=f6e369]
+            - text: patched-category-e130eb25
+          - generic [ref=f6e371]:
+            - checkbox "test-category-409-e130eb25" [ref=f6e372]
+            - text: test-category-409-e130eb25
+          - generic [ref=f6e374]:
+            - checkbox "test-category-put-409-e130eb25" [ref=f6e375]
+            - text: test-category-put-409-e130eb25
+          - generic [ref=f6e377]:
+            - checkbox "another-e130eb25" [ref=f6e378]
+            - text: another-e130eb25
+          - generic [ref=f6e380]:
+            - checkbox "test-category-patch-409-e130eb25" [ref=f6e381]
+            - text: test-category-patch-409-e130eb25
+          - generic [ref=f6e383]:
+            - checkbox "another-patch-e130eb25" [ref=f6e384]
+            - text: another-patch-e130eb25
+          - generic [ref=f6e386]:
+            - checkbox "test-category-del401-e130eb25" [ref=f6e387]
+            - text: test-category-del401-e130eb25
+          - generic [ref=f6e389]:
+            - checkbox "patched-category-ee36e4bd" [ref=f6e390]
+            - text: patched-category-ee36e4bd
+          - generic [ref=f6e392]:
+            - checkbox "test-category-409-ee36e4bd" [ref=f6e393]
+            - text: test-category-409-ee36e4bd
+          - generic [ref=f6e395]:
+            - checkbox "test-category-put-409-ee36e4bd" [ref=f6e396]
+            - text: test-category-put-409-ee36e4bd
+          - generic [ref=f6e398]:
+            - checkbox "another-ee36e4bd" [ref=f6e399]
+            - text: another-ee36e4bd
+          - generic [ref=f6e401]:
+            - checkbox "test-category-patch-409-ee36e4bd" [ref=f6e402]
+            - text: test-category-patch-409-ee36e4bd
+          - generic [ref=f6e404]:
+            - checkbox "another-patch-ee36e4bd" [ref=f6e405]
+            - text: another-patch-ee36e4bd
+          - generic [ref=f6e407]:
+            - checkbox "test-category-del401-ee36e4bd" [ref=f6e408]
+            - text: test-category-del401-ee36e4bd
+          - generic [ref=f6e410]:
+            - checkbox "patched-category-63a5ba0b" [ref=f6e411]
+            - text: patched-category-63a5ba0b
+          - generic [ref=f6e413]:
+            - checkbox "test-category-409-63a5ba0b" [ref=f6e414]
+            - text: test-category-409-63a5ba0b
+          - generic [ref=f6e416]:
+            - checkbox "test-category-put-409-63a5ba0b" [ref=f6e417]
+            - text: test-category-put-409-63a5ba0b
+          - generic [ref=f6e419]:
+            - checkbox "another-63a5ba0b" [ref=f6e420]
+            - text: another-63a5ba0b
+          - generic [ref=f6e422]:
+            - checkbox "test-category-patch-409-63a5ba0b" [ref=f6e423]
+            - text: test-category-patch-409-63a5ba0b
+          - generic [ref=f6e425]:
+            - checkbox "another-patch-63a5ba0b" [ref=f6e426]
+            - text: another-patch-63a5ba0b
+          - generic [ref=f6e428]:
+            - checkbox "test-category-del401-63a5ba0b" [ref=f6e429]
+            - text: test-category-del401-63a5ba0b
+        - heading "By brand:" [level=4] [ref=f6e111]
+        - group "Brands" [ref=f6e430]:
+          - generic [ref=f6e432]:
+            - checkbox "ForgeFlex Tools" [ref=f6e433]
+            - text: ForgeFlex Tools
+          - generic [ref=f6e435]:
+            - checkbox "MightyCraft Hardware" [ref=f6e436]
+            - text: MightyCraft Hardware
+          - generic [ref=f6e438]:
+            - checkbox "test-brand-del401-2f676da7" [ref=f6e439]
+            - text: test-brand-del401-2f676da7
+          - generic [ref=f6e441]:
+            - checkbox "patched-brand-abffdac8" [ref=f6e442]
+            - text: patched-brand-abffdac8
+          - generic [ref=f6e444]:
+            - checkbox "test-brand-404-abffdac8" [ref=f6e445]
+            - text: test-brand-404-abffdac8
+          - generic [ref=f6e447]:
+            - checkbox "test-brand-409-abffdac8" [ref=f6e448]
+            - text: test-brand-409-abffdac8
+          - generic [ref=f6e450]:
+            - checkbox "test-brand-put-409-abffdac8" [ref=f6e451]
+            - text: test-brand-put-409-abffdac8
+          - generic [ref=f6e453]:
+            - checkbox "another-abffdac8" [ref=f6e454]
+            - text: another-abffdac8
+          - generic [ref=f6e456]:
+            - checkbox "test-brand-patch-409-abffdac8" [ref=f6e457]
+            - text: test-brand-patch-409-abffdac8
+          - generic [ref=f6e459]:
+            - checkbox "another-patch-abffdac8" [ref=f6e460]
+            - text: another-patch-abffdac8
+          - generic [ref=f6e462]:
+            - checkbox "test-brand-del-abffdac8" [ref=f6e463]
+            - text: test-brand-del-abffdac8
+          - generic [ref=f6e465]:
+            - checkbox "test-brand-del401-abffdac8" [ref=f6e466]
+            - text: test-brand-del401-abffdac8
+          - generic [ref=f6e468]:
+            - checkbox "patched-brand-9cd7a897" [ref=f6e469]
+            - text: patched-brand-9cd7a897
+          - generic [ref=f6e471]:
+            - checkbox "test-brand-404-9cd7a897" [ref=f6e472]
+            - text: test-brand-404-9cd7a897
+          - generic [ref=f6e474]:
+            - checkbox "test-brand-409-9cd7a897" [ref=f6e475]
+            - text: test-brand-409-9cd7a897
+          - generic [ref=f6e477]:
+            - checkbox "test-brand-put-409-9cd7a897" [ref=f6e478]
+            - text: test-brand-put-409-9cd7a897
+          - generic [ref=f6e480]:
+            - checkbox "another-9cd7a897" [ref=f6e481]
+            - text: another-9cd7a897
+          - generic [ref=f6e483]:
+            - checkbox "test-brand-patch-409-9cd7a897" [ref=f6e484]
+            - text: test-brand-patch-409-9cd7a897
+          - generic [ref=f6e486]:
+            - checkbox "another-patch-9cd7a897" [ref=f6e487]
+            - text: another-patch-9cd7a897
+          - generic [ref=f6e489]:
+            - checkbox "test-brand-del401-9cd7a897" [ref=f6e490]
+            - text: test-brand-del401-9cd7a897
+          - generic [ref=f6e492]:
+            - checkbox "patched-brand-21f4f398" [ref=f6e493]
+            - text: patched-brand-21f4f398
+          - generic [ref=f6e495]:
+            - checkbox "test-brand-404-21f4f398" [ref=f6e496]
+            - text: test-brand-404-21f4f398
+          - generic [ref=f6e498]:
+            - checkbox "test-brand-409-21f4f398" [ref=f6e499]
+            - text: test-brand-409-21f4f398
+          - generic [ref=f6e501]:
+            - checkbox "test-brand-put-409-21f4f398" [ref=f6e502]
+            - text: test-brand-put-409-21f4f398
+          - generic [ref=f6e504]:
+            - checkbox "another-21f4f398" [ref=f6e505]
+            - text: another-21f4f398
+          - generic [ref=f6e507]:
+            - checkbox "test-brand-patch-409-21f4f398" [ref=f6e508]
+            - text: test-brand-patch-409-21f4f398
+          - generic [ref=f6e510]:
+            - checkbox "another-patch-21f4f398" [ref=f6e511]
+            - text: another-patch-21f4f398
+          - generic [ref=f6e513]:
+            - checkbox "test-brand-del401-21f4f398" [ref=f6e514]
+            - text: test-brand-del401-21f4f398
+          - generic [ref=f6e516]:
+            - checkbox "patched-brand-2bcacc99" [ref=f6e517]
+            - text: patched-brand-2bcacc99
+          - generic [ref=f6e519]:
+            - checkbox "test-brand-404-2bcacc99" [ref=f6e520]
+            - text: test-brand-404-2bcacc99
+          - generic [ref=f6e522]:
+            - checkbox "test-brand-409-2bcacc99" [ref=f6e523]
+            - text: test-brand-409-2bcacc99
+          - generic [ref=f6e525]:
+            - checkbox "test-brand-put-409-2bcacc99" [ref=f6e526]
+            - text: test-brand-put-409-2bcacc99
+          - generic [ref=f6e528]:
+            - checkbox "another-2bcacc99" [ref=f6e529]
+            - text: another-2bcacc99
+          - generic [ref=f6e531]:
+            - checkbox "test-brand-patch-409-2bcacc99" [ref=f6e532]
+            - text: test-brand-patch-409-2bcacc99
+          - generic [ref=f6e534]:
+            - checkbox "another-patch-2bcacc99" [ref=f6e535]
+            - text: another-patch-2bcacc99
+          - generic [ref=f6e537]:
+            - checkbox "test-brand-del401-2bcacc99" [ref=f6e538]
+            - text: test-brand-del401-2bcacc99
+          - generic [ref=f6e540]:
+            - checkbox "patched-brand-e130eb25" [ref=f6e541]
+            - text: patched-brand-e130eb25
+          - generic [ref=f6e543]:
+            - checkbox "test-brand-404-e130eb25" [ref=f6e544]
+            - text: test-brand-404-e130eb25
+          - generic [ref=f6e546]:
+            - checkbox "test-brand-409-e130eb25" [ref=f6e547]
+            - text: test-brand-409-e130eb25
+          - generic [ref=f6e549]:
+            - checkbox "test-brand-put-409-e130eb25" [ref=f6e550]
+            - text: test-brand-put-409-e130eb25
+          - generic [ref=f6e552]:
+            - checkbox "another-e130eb25" [ref=f6e553]
+            - text: another-e130eb25
+          - generic [ref=f6e555]:
+            - checkbox "test-brand-patch-409-e130eb25" [ref=f6e556]
+            - text: test-brand-patch-409-e130eb25
+          - generic [ref=f6e558]:
+            - checkbox "another-patch-e130eb25" [ref=f6e559]
+            - text: another-patch-e130eb25
+          - generic [ref=f6e561]:
+            - checkbox "test-brand-del401-e130eb25" [ref=f6e562]
+            - text: test-brand-del401-e130eb25
+          - generic [ref=f6e564]:
+            - checkbox "patched-brand-ee36e4bd" [ref=f6e565]
+            - text: patched-brand-ee36e4bd
+          - generic [ref=f6e567]:
+            - checkbox "test-brand-404-ee36e4bd" [ref=f6e568]
+            - text: test-brand-404-ee36e4bd
+          - generic [ref=f6e570]:
+            - checkbox "test-brand-409-ee36e4bd" [ref=f6e571]
+            - text: test-brand-409-ee36e4bd
+          - generic [ref=f6e573]:
+            - checkbox "test-brand-put-409-ee36e4bd" [ref=f6e574]
+            - text: test-brand-put-409-ee36e4bd
+          - generic [ref=f6e576]:
+            - checkbox "another-ee36e4bd" [ref=f6e577]
+            - text: another-ee36e4bd
+          - generic [ref=f6e579]:
+            - checkbox "test-brand-patch-409-ee36e4bd" [ref=f6e580]
+            - text: test-brand-patch-409-ee36e4bd
+          - generic [ref=f6e582]:
+            - checkbox "another-patch-ee36e4bd" [ref=f6e583]
+            - text: another-patch-ee36e4bd
+          - generic [ref=f6e585]:
+            - checkbox "test-brand-del401-ee36e4bd" [ref=f6e586]
+            - text: test-brand-del401-ee36e4bd
+          - generic [ref=f6e588]:
+            - checkbox "patched-brand-63a5ba0b" [ref=f6e589]
+            - text: patched-brand-63a5ba0b
+          - generic [ref=f6e591]:
+            - checkbox "test-brand-404-63a5ba0b" [ref=f6e592]
+            - text: test-brand-404-63a5ba0b
+          - generic [ref=f6e594]:
+            - checkbox "test-brand-409-63a5ba0b" [ref=f6e595]
+            - text: test-brand-409-63a5ba0b
+          - generic [ref=f6e597]:
+            - checkbox "test-brand-put-409-63a5ba0b" [ref=f6e598]
+            - text: test-brand-put-409-63a5ba0b
+          - generic [ref=f6e600]:
+            - checkbox "another-63a5ba0b" [ref=f6e601]
+            - text: another-63a5ba0b
+          - generic [ref=f6e603]:
+            - checkbox "test-brand-patch-409-63a5ba0b" [ref=f6e604]
+            - text: test-brand-patch-409-63a5ba0b
+          - generic [ref=f6e606]:
+            - checkbox "another-patch-63a5ba0b" [ref=f6e607]
+            - text: another-patch-63a5ba0b
+          - generic [ref=f6e609]:
+            - checkbox "test-brand-del401-63a5ba0b" [ref=f6e610]
+            - text: test-brand-del401-63a5ba0b
+        - heading "Sustainability:" [level=4] [ref=f6e114]
+        - group "Eco-Friendly Products" [ref=f6e115]:
+          - generic [ref=f6e118]:
+            - checkbox "Show only eco-friendly products" [ref=f6e119]
+            - text: Show only eco-friendly products
+      - generic [ref=f6e120]:
+        - 'heading "Searched for: hammer" [level=3] [ref=f6e611]'
+        - paragraph [ref=f6e612]: 6 products found for 'hammer'
+        - generic [ref=f6e613]:
+          - 'link "Claw Hammer with Shock Reduction Grip Compare Claw Hammer with Shock Reduction Grip CO₂: A B C D E $13.41" [ref=f6e614] [cursor=pointer]':
+            - /url: /product/01M5DN8XQZQ8XRJJJP0TSD8NP3
+            - generic [ref=f6e615]:
+              - img "Claw Hammer with Shock Reduction Grip" [ref=f6e616]
+              - button "Compare" [ref=f6e617]
+            - generic [ref=f6e621]:
+              - heading "Claw Hammer with Shock Reduction Grip" [level=5] [ref=f6e622]
+              - generic "A = most environmentally friendly, E = higher environmental impact" [ref=f6e623]:
+                - text: "CO₂:"
+                - generic [ref=f6e624]: A
+                - generic [ref=f6e625]: B
+                - generic [ref=f6e626]: C
+                - generic [ref=f6e627]: D
+                - generic [ref=f6e628]: E
+            - generic [ref=f6e629]: $13.41
+          - 'link "Hammer Compare Hammer CO₂: A B C D E $12.58" [ref=f6e631] [cursor=pointer]':
+            - /url: /product/01M5DN8XR1RBY8TRBE722GRY8P
+            - generic [ref=f6e632]:
+              - img "Hammer" [ref=f6e633]
+              - button "Compare" [ref=f6e634]
+            - generic [ref=f6e638]:
+              - heading "Hammer" [level=5] [ref=f6e639]
+              - generic "A = most environmentally friendly, E = higher environmental impact" [ref=f6e640]:
+                - text: "CO₂:"
+                - generic [ref=f6e641]: A
+                - generic [ref=f6e642]: B
+                - generic [ref=f6e643]: C
+                - generic [ref=f6e644]: D
+                - generic [ref=f6e645]: E
+            - generic [ref=f6e646]: $12.58
+          - 'link "Claw Hammer Compare Claw Hammer CO₂: A B C D E $11.48" [ref=f6e648] [cursor=pointer]':
+            - /url: /product/01M5DN8XR36P1XMEB7P3CQE1ME
+            - generic [ref=f6e649]:
+              - img "Claw Hammer" [ref=f6e650]
+              - button "Compare" [ref=f6e651]
+            - generic [ref=f6e655]:
+              - heading "Claw Hammer" [level=5] [ref=f6e656]
+              - generic "A = most environmentally friendly, E = higher environmental impact" [ref=f6e657]:
+                - text: "CO₂:"
+                - generic [ref=f6e658]: A
+                - generic [ref=f6e659]: B
+                - generic [ref=f6e660]: C
+                - generic [ref=f6e661]: D
+                - generic [ref=f6e662]: E
+            - generic [ref=f6e663]: $11.48
+          - 'link "Thor Hammer Compare Thor Hammer CO₂: A B C D E $11.14" [ref=f6e665] [cursor=pointer]':
+            - /url: /product/01M5DN8XR52239P0W8S5CWZEG2
+            - generic [ref=f6e666]:
+              - img "Thor Hammer" [ref=f6e667]
+              - button "Compare" [ref=f6e668]
+            - generic [ref=f6e672]:
+              - heading "Thor Hammer" [level=5] [ref=f6e673]
+              - generic "A = most environmentally friendly, E = higher environmental impact" [ref=f6e674]:
+                - text: "CO₂:"
+                - generic [ref=f6e675]: A
+                - generic [ref=f6e676]: B
+                - generic [ref=f6e677]: C
+                - generic [ref=f6e678]: D
+                - generic [ref=f6e679]: E
+            - generic [ref=f6e680]: $11.14
+          - 'link "Claw Hammer with Fiberglass Handle Compare Claw Hammer with Fiberglass Handle CO₂: A B C D E $20.14" [ref=f6e682] [cursor=pointer]':
+            - /url: /product/01M5DN8XR9XHV9NFBK9AJ4WEVR
+            - generic [ref=f6e683]:
+              - img "Claw Hammer with Fiberglass Handle" [ref=f6e684]
+              - button "Compare" [ref=f6e685]
+            - generic [ref=f6e689]:
+              - heading "Claw Hammer with Fiberglass Handle" [level=5] [ref=f6e690]
+              - generic "A = most environmentally friendly, E = higher environmental impact" [ref=f6e691]:
+                - text: "CO₂:"
+                - generic [ref=f6e692]: A
+                - generic [ref=f6e693]: B
+                - generic [ref=f6e694]: C
+                - generic [ref=f6e695]: D
+                - generic [ref=f6e696]: E
+            - generic [ref=f6e697]: $20.14
+          - 'link "Court Hammer Compare Court Hammer CO₂: A B C D E $18.63" [ref=f6e699] [cursor=pointer]':
+            - /url: /product/01M5DN8XRBTJ9TE3ZEJ3PXT4DW
+            - generic [ref=f6e700]:
+              - img "Court Hammer" [ref=f6e701]
+              - button "Compare" [ref=f6e702]
+            - generic [ref=f6e706]:
+              - heading "Court Hammer" [level=5] [ref=f6e707]
+              - generic "A = most environmentally friendly, E = higher environmental impact" [ref=f6e708]:
+                - text: "CO₂:"
+                - generic [ref=f6e709]: A
+                - generic [ref=f6e710]: B
+                - generic [ref=f6e711]: C
+                - generic [ref=f6e712]: D
+                - generic [ref=f6e713]: E
+            - generic [ref=f6e714]: $18.63
+  - contentinfo [ref=f6e171]:
+    - generic [ref=f6e173]:
+      - generic [ref=f6e174]: Learn & Explore
+      - generic [ref=f6e175]:
+        - link "Learn Test Automation Hands-on courses for Playwright, Robot Framework, APIs and more" [ref=f6e177] [cursor=pointer]:
+          - /url: https://onlinecourses.testsmith.io
+          - generic [ref=f6e180]:
+            - generic [ref=f6e181]: Learn Test Automation
+            - text: Hands-on courses for Playwright, Robot Framework, APIs and more
+        - link "API Spector Open-source API testing, mocking and contract testing" [ref=f6e183] [cursor=pointer]:
+          - /url: https://api-spector.dev
+          - generic [ref=f6e186]:
+            - generic [ref=f6e187]: API Spector
+            - text: Open-source API testing, mocking and contract testing
+        - link "GitHub Source code, issues and contributions" [ref=f6e189] [cursor=pointer]:
+          - /url: https://github.com/testsmith-io/practice-software-testing
+          - generic [ref=f6e192]:
+            - generic [ref=f6e193]: GitHub
+            - text: Source code, issues and contributions
+    - generic [ref=f6e194]:
+      - generic [ref=f6e195]:
+        - text: This is a DEMO application, used for software testing training purpose. |
+        - link "Privacy Policy" [ref=f6e196] [cursor=pointer]:
+          - /url: /privacy
+        - text: "| Banner photo by"
+        - link "Barn Images" [ref=f6e197] [cursor=pointer]:
+          - /url: https://unsplash.com/@barnimages
+        - text: "on"
+        - link "Unsplash" [ref=f6e198] [cursor=pointer]:
+          - /url: https://unsplash.com/photos/t5YUoHW6zRo
+        - text: .
+      - generic [ref=f6e199]: v2.5 | Built 2026-10-11 | Angular 20.0.5
+  - button "Open chat" [ref=f6e201] [cursor=pointer]
+  - button "Show live shop activity" [ref=f6e205] [cursor=pointer]

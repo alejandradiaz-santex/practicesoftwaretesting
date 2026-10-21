@@ -1,0 +1,16 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - text: View the
+    - link "Documentation" [ref=e4] [cursor=pointer]:
+      - /url: https://testsmith-io.github.io/practice-software-testing/#/
+    - text: for this application.
+  - generic [ref=e7]:
+    - generic [ref=e8]: Practice Black Box Testing & Bug Hunting
+    - button "Testing Guide" [ref=e9] [cursor=pointer]
+    - button "🐛 Bug Hunting" [ref=e10] [cursor=pointer]
+  - generic [ref=e13]:
+    - heading "Practice Software Testing - Toolshop" [level=1] [ref=e14]
+    - paragraph [ref=e15]:
+      - img "Banner" [ref=e16]
+    - separator [ref=e17]
+  - button "Show live shop activity" [ref=e19] [cursor=pointer]

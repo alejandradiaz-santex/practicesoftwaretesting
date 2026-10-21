@@ -1,0 +1,13 @@
+[     868ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[     870ms] [ERROR] ERROR {message: Unauthorized} @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[    1084ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[    6381ms] [LOG] Initializing Google Analytics 4: G-0BJFXRKTYC @ https://practicesoftwaretesting.com/chunk-SS5V56Y4.js:0
+[    6449ms] [LOG] Google Analytics 4 ready for tracking @ https://practicesoftwaretesting.com/chunk-SS5V56Y4.js:0
+[   14310ms] [ERROR] Failed to load resource: the server responded with a status of 422 () @ https://api.practicesoftwaretesting.com/carts/01m5dhv2s0v4hzp04kx39dwkfr:0
+[   23775ms] [ERROR] Failed to load resource: the server responded with a status of 422 () @ https://api.practicesoftwaretesting.com/carts/01m5dhv2s0v4hzp04kx39dwkfr:0
+[  196150ms] [ERROR] Failed to load resource: the server responded with a status of 422 () @ https://api.practicesoftwaretesting.com/carts/01m5dhv2s0v4hzp04kx39dwkfr:0
+[  200000ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[  200002ms] [ERROR] ERROR {message: Unauthorized} @ https://practicesoftwaretesting.com/chunk-XPTZBBTO.js:6
+[  200223ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://api.practicesoftwaretesting.com/users/me:0
+[  202175ms] [LOG] Initializing Google Analytics 4: G-0BJFXRKTYC @ https://practicesoftwaretesting.com/chunk-SS5V56Y4.js:0
+[  202204ms] [LOG] Google Analytics 4 ready for tracking @ https://practicesoftwaretesting.com/chunk-SS5V56Y4.js:0

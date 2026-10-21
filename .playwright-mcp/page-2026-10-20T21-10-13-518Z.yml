@@ -1,0 +1,116 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - text: View the
+      - link "Documentation" [ref=e4] [cursor=pointer]:
+        - /url: https://testsmith-io.github.io/practice-software-testing/#/
+      - text: for this application.
+    - generic [ref=e5]:
+      - generic [ref=e7]:
+        - generic [ref=e8]: Practice Black Box Testing & Bug Hunting
+        - button "Testing Guide" [ref=e9] [cursor=pointer]
+        - button "🐛 Bug Hunting" [ref=e10] [cursor=pointer]
+      - navigation [ref=e17]:
+        - generic [ref=e18]:
+          - link "Practice Software Testing - Toolshop" [ref=e19] [cursor=pointer]:
+            - /url: /
+          - generic [ref=e38]:
+            - menubar "Main menu" [ref=e39]:
+              - menuitem [ref=e40]:
+                - link "Home" [ref=e41] [cursor=pointer]:
+                  - /url: /
+              - menuitem [ref=e42]:
+                - button "Categories" [ref=e43] [cursor=pointer]
+              - menuitem [ref=e44]:
+                - link "Contact" [ref=e45] [cursor=pointer]:
+                  - /url: /contact
+              - menuitem [ref=e46]:
+                - link "Sign in" [ref=e47] [cursor=pointer]:
+                  - /url: /auth/login
+              - menuitem [ref=e184]:
+                - link "cart" [active] [ref=e185] [cursor=pointer]:
+                  - /url: /checkout
+                  - generic [ref=e189]: "1"
+            - button "Select language" [ref=e49] [cursor=pointer]: EN
+    - generic [ref=e194]:
+      - list [ref=e196]:
+        - listitem:
+          - generic:
+            - generic: Cart
+            - generic: "1"
+        - listitem:
+          - generic:
+            - generic: Sign in
+            - generic: "2"
+        - listitem:
+          - generic:
+            - generic: Billing Address
+            - generic: "3"
+        - listitem:
+          - generic:
+            - generic: Payment
+            - generic: "4"
+      - generic [ref=e200]:
+        - table [ref=e201]:
+          - rowgroup [ref=e202]:
+            - row [ref=e203]:
+              - columnheader "Item" [ref=e204]
+              - columnheader "Quantity" [ref=e205]
+              - columnheader "Price" [ref=e206]
+              - columnheader "Total" [ref=e207]
+              - columnheader [ref=e208]
+          - rowgroup [ref=e209]:
+            - row [ref=e210]:
+              - cell "Combination Pliers" [ref=e211]
+              - cell [ref=e213]:
+                - spinbutton "Quantity for Combination Pliers" [ref=e215]: "1"
+              - cell "$14.15" [ref=e216]
+              - cell "$14.15" [ref=e217]
+              - cell [ref=e218]:
+                - generic [ref=e219] [cursor=pointer]
+          - rowgroup [ref=e223]:
+            - row [ref=e224]:
+              - cell [ref=e225]
+              - cell [ref=e226]
+              - cell [ref=e227]:
+                - strong [ref=e228]: Total
+              - cell "$14.15" [ref=e229]
+              - cell [ref=e230]
+        - generic [ref=e231]:
+          - button "Continue Shopping" [ref=e232] [cursor=pointer]
+          - button "Proceed to checkout" [ref=e233] [cursor=pointer]
+    - contentinfo [ref=e151]:
+      - generic [ref=e153]:
+        - generic [ref=e154]: Learn & Explore
+        - generic [ref=e155]:
+          - link "Learn Test Automation Hands-on courses for Playwright, Robot Framework, APIs and more" [ref=e157] [cursor=pointer]:
+            - /url: https://onlinecourses.testsmith.io
+            - generic [ref=e160]:
+              - generic [ref=e161]: Learn Test Automation
+              - text: Hands-on courses for Playwright, Robot Framework, APIs and more
+          - link "API Spector Open-source API testing, mocking and contract testing" [ref=e163] [cursor=pointer]:
+            - /url: https://api-spector.dev
+            - generic [ref=e166]:
+              - generic [ref=e167]: API Spector
+              - text: Open-source API testing, mocking and contract testing
+          - link "GitHub Source code, issues and contributions" [ref=e169] [cursor=pointer]:
+            - /url: https://github.com/testsmith-io/practice-software-testing
+            - generic [ref=e172]:
+              - generic [ref=e173]: GitHub
+              - text: Source code, issues and contributions
+      - generic [ref=e174]:
+        - generic [ref=e175]:
+          - text: This is a DEMO application, used for software testing training purpose. |
+          - link "Privacy Policy" [ref=e176] [cursor=pointer]:
+            - /url: /privacy
+          - text: "| Banner photo by"
+          - link "Barn Images" [ref=e177] [cursor=pointer]:
+            - /url: https://unsplash.com/@barnimages
+          - text: "on"
+          - link "Unsplash" [ref=e178] [cursor=pointer]:
+            - /url: https://unsplash.com/photos/t5YUoHW6zRo
+          - text: .
+        - generic [ref=e179]: v2.5 | Built 2026-10-11 | Angular 20.0.5
+    - button "Open chat" [ref=e181] [cursor=pointer]
+    - button "Show live shop activity" [ref=e12] [cursor=pointer]
+  - alert "Product added to shopping cart." [ref=e191]
