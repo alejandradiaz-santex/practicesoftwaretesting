@@ -61,7 +61,9 @@ test.describe('Búsqueda y filtros', () => {
     const categoryBody = await categoryResponse.json();
     expect(categoryBody.data.length).toBeGreaterThan(0);
     await expect(catalog.productCards).toHaveCount(categoryBody.data.length);
-    await expect(catalog.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+    // Los nombres mostrados coinciden con los de la respuesta del servidor. No se exige "hammer" en el
+    // nombre: el sitio puede tener productos con otros nombres en la categoria (ej. "topo").
+    await expect(catalog.productNames).toHaveText(categoryBody.data.map((p: { name: string }) => p.name));
     await expect(page.getByText('Sledgehammer')).toBeVisible();
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/');
   });
