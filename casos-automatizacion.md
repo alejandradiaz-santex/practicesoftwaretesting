@@ -21,7 +21,7 @@ Los tests están en `tests/Critical Cases/` y el plan detallado en `specs/checko
 ### TC-001: Compra Exitosa como Guest
 - **Descripción:** Validar que un usuario guest pueda realizar la compra exitosa de un producto del carrito.
 - **Precondiciones:** sin sesión iniciada y producto con stock.
-- **Datos:** datos de contacto y dirección válidos del guest, "Combination Pliers" (14,15 USD).
+- **Datos:** datos de contacto y dirección válidos del guest, "Bolt Cutters" (48,41 USD).
 - **Pasos:**
   1. Abrir el sitio sin iniciar sesión.
   2. Abrir el producto desde el catálogo y agregarlo al carrito.
@@ -46,9 +46,9 @@ Los tests están en `tests/Critical Cases/` y el plan detallado en `specs/checko
 ### TC-003: Cantidades y Totales dentro del Carrito
 - **Descripción:** validar el cálculo de subtotal y total, la edición de cantidades y la persistencia del carrito con un producto.
 - **Precondiciones:** sin sesión iniciada y carrito vacío.
-- **Datos:** "Combination Pliers" (14,15 USD). Cantidades de prueba: 1, 2, 0 y -1.
+- **Datos:** "Bolt Cutters" (48,41 USD). Cantidades de prueba: 1, 2, 0 y -1.
 - **Pasos:**
-  1. Agregar "Combination Pliers" al carrito (cantidad 1).
+  1. Agregar "Bolt Cutters" al carrito (cantidad 1).
   2. Abrir el carrito y verificar precio, subtotal y total.
   3. Subir la cantidad a 2.
   4. Bajar la cantidad a 1.
@@ -56,9 +56,9 @@ Los tests están en `tests/Critical Cases/` y el plan detallado en `specs/checko
   6. Recargar la página.
   7. Eliminar el producto del carrito.
 - **Esperado:**
-  - Paso 2: precio igual al del catálogo; subtotal y total 14,15.
-  - Paso 3: subtotal y total 28,30.
-  - Paso 4: subtotal y total 14,15.
+  - Paso 2: precio igual al del catálogo; subtotal y total 48,41.
+  - Paso 3: subtotal y total 96,82.
+  - Paso 4: subtotal y total 48,41.
   - Paso 5: cantidades 0 y -1 no aceptadas.
   - Paso 6: el carrito se mantiene con el mismo contenido y total.
   - Paso 7: el carrito queda vacío.
