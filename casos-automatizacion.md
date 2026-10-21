@@ -4,13 +4,15 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
 
 ## 📊 Matriz de Seguimiento Técnico
 
-| ID | Caso de Prueba | Tipo de Test / Capa | Herramienta Sugerida | Estado |
-| :--- | :--- | :--- | :--- | :--- |
-| **TC-001** | Compra Exitosa como Guest | UI + API Check (`/invoices/guest`) | Playwright + TS | ⏳ Pendiente |
-| **TC-002** | Registro de Cuenta exitoso | UI (Validación de Formularios) | Playwright + TS | ⏳ Pendiente |
-| **TC-003** | Cantidades y Totales en Carrito | UI (Data-driven: 1, 2, 0, -1) | Playwright + TS | ⏳ Pendiente |
-| **TC-004** | Búsqueda y Filtros | UI (Filtros dinámicos) | Playwright + TS | ⏳ Pendiente |
-| **TC-005** | Checkout con datos inválidos | UI (Validación de Errores / Negativo) | Playwright + TS | ⏳ Pendiente |
+| ID | Caso de Prueba | Tipo de Test / Capa | Herramienta | Test | Estado |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-001** | Compra Exitosa como Guest | UI + API Check (`/invoices/guest`) | Playwright + TS | `tc-001-compra-guest.spec.ts` | ✅ Automatizado |
+| **TC-002** | Registro de Cuenta exitoso | UI + API Check (`/users/register`) | Playwright + TS | `tc-002-registro-exitoso.spec.ts` | ✅ Automatizado |
+| **TC-003** | Cantidades y Totales en Carrito | UI + API Check (PUT de cantidad); falta el paso de eliminar | Playwright + TS | `tc-003-cantidades-totales.spec.ts` | ✅ Automatizado (paso 7 pendiente) |
+| **TC-004** | Búsqueda y Filtros | UI (Filtros dinámicos) | Playwright + TS | `tc-004-busqueda-filtros.spec.ts` | ✅ Automatizado |
+| **TC-005** | Checkout con datos inválidos | UI + API Check (`/payment/check`, Negativo) | Playwright + TS | `tc-005-checkout-invalido.spec.ts` | ✅ Automatizado |
+
+Los tests están en `tests/Critical Cases/` y el plan detallado en `specs/checkout.md`.
 
 ---
 
@@ -83,4 +85,4 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
   2. Ingresar un código postal inválido.
   3. En el pago, elegir credit-card y dejar campos vacíos.
   4. Ahora elegir bank-transfer y dejar campos vacíos.
-- **Esperado:** los campos obligatorios vacíos bloquean el avance; con un código postal inválido el sitio no muestra error y permite avanzar (posible defecto); credit-card con campos vacíos no confirma el pago (muestra "Unknown error") y no crea orden; bank-transfer con campos vacíos deja el botón de pago deshabilitado.
+- **Esperado:** los campos obligatorios vacíos bloquean el avance; con un código postal inválido el sitio no muestra error y permite avanzar (posible defecto); credit-card con campos vacíos no confirma el pago: el servidor responde 422 con un error por campo, pero la interfaz solo muestra "Unknown error" (posible defecto), y no se crea orden; bank-transfer con campos vacíos deja el botón de pago deshabilitado.

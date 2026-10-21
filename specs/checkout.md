@@ -2,7 +2,17 @@
 
 ## Application Overview
 
-Plan para TC-001 "Compra Exitosa como Guest" en Toolshop (https://practicesoftwaretesting.com). Base: casos-automatizacion.md (ID, título, datos y orden de pasos). Refinado con exploración real hasta el paso Payment (sin confirmar). Selectores: el sitio usa el atributo `data-test` (NO data-testid), p.ej. page.locator('[data-test="add-to-cart"]'); si se usa getByTestId hay que configurar testIdAttribute='data-test'. Hallazgos: (1) Guest SÍ existe: pestaña "Continue as Guest" en el paso Sign in (campos Email address, First name, Last name; botón [data-test=guest-submit] "Continue as Guest"). (2) Billing Address: Country (select [data-test=country], valores ISO p.ej. AR), Postal code [data-test=postal_code], House number [data-test=house_number], Street [street], City [city], State [state]. Con Argentina + C1425 + 123, tras ~4 s se autocompletaron Street/City/State con datos ficticios aleatorios (ej. "Corine Cliff", "North Amiraland", "Ohio") y [data-test=proceed-3] quedó habilitado al primer intento; antes de completar estaba deshabilitado. Los valores autocompletados son aleatorios: no usarlos como esperados fijos. (3) Payment: [data-test=payment-method] con opciones bank-transfer, cash-on-delivery, credit-card, buy-now-pay-later, gift-card. Con cash-on-delivery NO aparece ningún campo adicional; el botón [data-test=finish] es de DOS FASES: deshabilitado hasta elegir método, texto "Check payment"; el primer clic muestra "Payment was successful" y cambia el botón a "Confirm"; el segundo clic crea la orden. (4) Carrito: product-title, product-price $14.15, line-price $14.15, cart-total $14.15, proceed-1 "Proceed to checkout", nav-cart muestra cantidad (cart-quantity). Al hacer clic en nav-cart se navega a /checkout (no existe /cart aparte). VERIFICADO con una compra guest de prueba (2026-10-20, orden INV-2026000004): toast de éxito "Product added to shopping cart."; tras guest-submit con datos válidos NO avanza a Billing, queda en Sign in con el texto "Continuing as guest: Ana Prueba (guest.qa@example.com)" y un botón [data-test=proceed-1] "Proceed to checkout"; POST /invoices/guest responde 201 con invoice_number (formato INV-AAAANNNNNN), total, user_id null y billing_*; mensaje final "Thanks for your order! Your invoice number is INV-2026000004." en app-payment > div.login-form-1 (sin data-test); tras la compra desaparece el enlace del carrito del navbar (no hay nav-cart ni cart-quantity en el DOM). ADVERTENCIA: en una sesión, add-to-cart de Combination Pliers falló con el toast de error "The selected product id is invalid." (el ID del producto cambia entre sesiones: llegar siempre al producto desde el catálogo, nunca por URL guardada). NO VERIFICADO: qué muestra /checkout al reabrirlo tras la compra; el texto del botón final tras elegir COD en una sesión nueva (se observó "Check payment").
+Plan para TC-001 "Compra Exitosa como Guest" en Toolshop (https://practicesoftwaretesting.com). Base: casos-automatizacion.md (ID, título, datos y orden de pasos). Refinado con exploración real hasta el paso Payment (sin confirmar). Selectores: el sitio usa el atributo `data-test` (NO data-testid), p.ej. page.locator('[data-test="add-to-cart"]'); si se usa getByTestId hay que configurar testIdAttribute='data-test'. Hallazgos: (1) Guest SÍ existe: pestaña "Continue as Guest" en el paso Sign in (campos Email address, First name, Last name; botón [data-test=guest-submit] "Continue as Guest"). (2) Billing Address: Country (select [data-test=country], valores ISO p.ej. AR), Postal code [data-test=postal_code], House number [data-test=house_number], Street [street], City [city], State [state]. Con Argentina + C1425 + 123, tras ~4 s se autocompletaron Street/City/State con datos ficticios aleatorios (ej. "Corine Cliff", "North Amiraland", "Ohio") y [data-test=proceed-3] quedó habilitado al primer intento; antes de completar estaba deshabilitado. Los valores autocompletados son aleatorios: no usarlos como esperados fijos. (3) Payment: [data-test=payment-method] con opciones bank-transfer, cash-on-delivery, credit-card, buy-now-pay-later, gift-card. Con cash-on-delivery NO aparece ningún campo adicional; el botón [data-test=finish] es de DOS FASES: deshabilitado hasta elegir método, texto "Check payment"; el primer clic muestra "Payment was successful" y cambia el botón a "Confirm"; el segundo clic crea la orden. (4) Carrito: product-title, product-price $14.15, line-price $14.15, cart-total $14.15, proceed-1 "Proceed to checkout", nav-cart muestra cantidad (cart-quantity). Al hacer clic en nav-cart se navega a /checkout (no existe /cart aparte). VERIFICADO con una compra guest de prueba (2026-10-20, orden INV-2026000004): toast de éxito "Product added to shopping cart."; tras guest-submit con datos válidos NO avanza a Billing, queda en Sign in con el texto "Continuing as guest: Ana Prueba (guest.qa@example.com)" y un botón [data-test=proceed-2-guest] "Proceed to checkout" (proceed-1 está oculto en ese paso); POST /invoices/guest responde 201 con invoice_number (formato INV-AAAANNNNNN), total, user_id null y billing_*; mensaje final "Thanks for your order! Your invoice number is INV-2026000004." en app-payment > div.login-form-1 (sin data-test); tras la compra desaparece el enlace del carrito del navbar (no hay nav-cart ni cart-quantity en el DOM). ADVERTENCIA: en una sesión, add-to-cart de Combination Pliers falló con el toast de error "The selected product id is invalid." (el ID del producto cambia entre sesiones: llegar siempre al producto desde el catálogo, nunca por URL guardada). NO VERIFICADO: qué muestra /checkout al reabrirlo tras la compra; el texto del botón final tras elegir COD en una sesión nueva (se observó "Check payment").
+
+## Implementación
+
+- **Tests:** `tests/Critical Cases/`: tc-001-compra-guest, tc-002-registro-exitoso, tc-003-cantidades-totales, tc-004-busqueda-filtros y tc-005-checkout-invalido (`.spec.ts`).
+- **Page Object:** `tests/pages/checkout.page.ts` (`CheckoutPage`): pasos Cart, Sign in como guest, Billing Address y Payment. Lo usan TC-001, TC-003 y TC-005. Agregar el producto al carrito sigue escrito en cada test.
+- **Locators:** solo por rol o `data-test` (`testIdAttribute: 'data-test'` en `playwright.config.ts`); nunca CSS ni XPath.
+- **Contraseña de TC-002:** la cuenta es descartable y el test no vuelve a iniciar sesión, así que la contraseña se genera en cada ejecución (cumple las reglas del sitio) y no se guarda. Si se define la variable de entorno `TC002_PASSWORD` (por ejemplo en `.env`, que está en `.gitignore`), se usa esa. No hace falta ningún secreto en GitHub Actions.
+- **Validaciones por API que ya hace cada test:** TC-001 `POST /invoices/guest` 201 e `invoice_number`; TC-002 `POST /users/register` 201 con el email (el cuerpo se lee dentro de `page.route` porque el sitio redirige enseguida); TC-003 `PUT` de cantidad 200 con la cantidad enviada; TC-004 el cuerpo de las peticiones de búsqueda y filtro; TC-005 `POST /payment/check` 422 con un error por campo y que no se envíe ningún `POST` a `/invoices`.
+- **Tiempos:** el catálogo (TC-004) y el total del carrito (TC-003) pueden tardar; sus primeras esperas usan 15 s.
+- **Efectos en el sitio demo:** TC-001 crea una orden guest y TC-002 crea una cuenta en cada ejecución; TC-003, TC-004 y TC-005 no crean datos.
 
 ## Test Scenarios
 
@@ -30,8 +40,8 @@ Plan para TC-001 "Compra Exitosa como Guest" en Toolshop (https://practicesoftwa
     - expect: Aparece el formulario con Email address *, First name *, Last name * y botón [data-test=guest-submit] 'Continue as Guest'
   6. Paso 4a (datos de guest): completar [data-test=guest-email]='guest.qa@example.com', [data-test=guest-first-name]='Ana', [data-test=guest-last-name]='Prueba' y clic en [data-test=guest-submit].
     - expect: Permanece en el paso 'Sign in' y muestra "Continuing as guest: Ana Prueba (guest.qa@example.com)" sin errores de guest
-    - expect: Aparece un botón [data-test=proceed-1] 'Proceed to checkout' (mismo data-test que en el paso Cart)
-  7. Paso 4a-bis: clic en [data-test=proceed-1] ('Proceed to checkout') del paso Sign in.
+    - expect: Aparece un botón [data-test=proceed-2-guest] 'Proceed to checkout' ([data-test=proceed-1] existe en el DOM pero está oculto en este paso)
+  7. Paso 4a-bis: clic en [data-test=proceed-2-guest] ('Proceed to checkout') del paso Sign in.
     - expect: Se muestra el paso 'Billing Address'
   8. Paso 4b (dirección): en [data-test=country] seleccionar 'Argentina' (AR), completar [data-test=postal_code]='C1425' y [data-test=house_number]='123'; esperar ~4 s o hasta que [data-test=street] tenga valor (expect.toHaveValue(/.+/)).
     - expect: Texto de ayuda [data-test=postcode-lookup-hint]: 'Enter country, postal code and house number. We will fill in the rest automatically.'
@@ -82,13 +92,13 @@ HALLAZGOS VERIFICADOS (2026-10-20):
   5. Paso 5: ingresar en [data-test=password] una contraseña válida (mín. 8 caracteres, mayúsculas y minúsculas, un número y un símbolo) tomada de variable de entorno.
     - expect: (NO VERIFICADO) el indicador 'Password strength' refleja un nivel alto (p.ej. Strong/Very Strong/Excellent) y la lista de reglas se considera cumplida; no se observó comportamiento real
   6. Paso 6: preparar waitForResponse para POST **/users/register y hacer clic en [data-test=register-submit] ('Register').
-    - expect: La API POST /users/register responde 201 (verificado en un registro manual; el cuerpo de la respuesta no se pudo leer)
+    - expect: La API POST /users/register responde 201 y el cuerpo trae el email enviado (verificado con el test automatizado; el cuerpo se lee dentro de page.route porque el sitio redirige apenas responde y después de navegar ya no se puede leer)
     - expect: El sitio redirige a https://practicesoftwaretesting.com/auth/login (verificado); en esa página no hay mensajes de error visibles
     - expect: No se muestra ningún mensaje de éxito (verificado): el sitio solo redirige a la pantalla de login
 
 **NO VERIFICADO (TC-002):**
 
-- API POST /users/register: cuerpo de la respuesta (no se pudo leer) y si exige campos adicionales. Verificado en un registro manual (2026-10-20): responde 201 y el sitio redirige a /auth/login.
+- API POST /users/register: qué otros campos devuelve el cuerpo de la respuesta (solo se verificó el email) y si exige campos adicionales. Verificado: responde 201, el cuerpo trae el email enviado y el sitio redirige a /auth/login.
 - Textos de error de validación por campo (required, formato de email, formato de fecha, país no elegido, contraseña débil): no se mostró ninguno en blur; podrían aparecer solo al enviar.
 - Comportamiento del indicador de fortaleza y de las reglas de contraseña al escribir (no se escribió contraseña); funcionamiento del botón de ojo.
 - Validación server-side de las reglas de contraseña, de email duplicado y de edad mínima en fecha de nacimiento.
@@ -111,7 +121,7 @@ Hallazgos VERIFICADOS: (1) Carrito vacío al inicio: en /checkout no existe [dat
 **Steps:**
   1. Precondición: sin sesión, carrito vacío (contexto nuevo). Verificar el estado inicial abriendo el sitio.
     - expect: No existe [data-test=nav-cart] ni [data-test=cart-quantity] en el navbar
-  2. Paso 1: en el catálogo hacer clic en la tarjeta 'Combination Pliers' (locator('.card', {hasText:'Combination Pliers'}).first()) y, en la ficha, clic en [data-test=add-to-cart] con cantidad 1. Nunca navegar por URL guardada.
+  2. Paso 1: en el catálogo hacer clic en el enlace 'Combination Pliers' (getByRole('link', { name: /Combination Pliers/ })) y, en la ficha, clic en [data-test=add-to-cart] con cantidad 1. Nunca navegar por URL guardada.
     - expect: URL /product/<id> con título 'Combination Pliers'
     - expect: Toast "Product added to shopping cart."
     - expect: [data-test=cart-quantity] muestra 1
@@ -137,7 +147,7 @@ Hallazgos VERIFICADOS: (1) Carrito vacío al inicio: en /checkout no existe [dat
     - expect: No asertar el estado transitorio "$-14.15" antes del blur
   8. Paso 6: dejar la cantidad en 2 (escribir 2 + Tab, esperar $28.30) y recargar la página (page.reload()).
     - expect: Sigue en /checkout con 'Combination Pliers', cantidad 2, line-price y cart-total '$28.30', cart-quantity 2
-  9. Paso 7: clic en app-cart a.btn-danger (botón eliminar sin data-test).
+  9. Paso 7 (PENDIENTE, no automatizado): eliminar el producto con el botón rojo del carrito. Ese botón no tiene nombre accesible ni data-test, así que no hay locator por rol/data-test y el paso quedó como TODO en el test (no se usa CSS).
     - expect: Toast "Product deleted."
     - expect: app-cart muestra el texto "The cart is empty. Nothing to display." sin tabla ni [data-test=proceed-1]
     - expect: Desaparecen [data-test=nav-cart] y [data-test=cart-quantity] del navbar
@@ -222,7 +232,7 @@ HALLAZGOS VERIFICADOS (2026-10-20, flujo guest, sin escribir datos financieros, 
 **File:** `tests/Critical Cases/tc-005-checkout-invalido.spec.ts`
 
 **Steps:**
-  1. Precondición: contexto nuevo, sin sesión, carrito vacío. En el catálogo (https://practicesoftwaretesting.com) abrir la tarjeta 'Combination Pliers' (locator('.card', {hasText:'Combination Pliers'}).first(); nunca por URL guardada), clic en [data-test=add-to-cart], clic en [data-test=nav-cart], clic en [data-test=proceed-1].
+  1. Precondición: contexto nuevo, sin sesión, carrito vacío. En el catálogo (https://practicesoftwaretesting.com) abrir el enlace 'Combination Pliers' (getByRole('link', { name: /Combination Pliers/ }); nunca por URL guardada), clic en [data-test=add-to-cart], clic en [data-test=nav-cart], clic en [data-test=proceed-1].
     - expect: Toast "Product added to shopping cart."
     - expect: Paso Sign in con pestañas 'Sign in' y 'Continue as Guest'
     - expect: Plan B si aparece "The selected product id is invalid.": volver al catálogo en contexto nuevo y reintentar (máx. 2)
@@ -239,12 +249,15 @@ HALLAZGOS VERIFICADOS (2026-10-20, flujo guest, sin escribir datos financieros, 
     - expect: No hay mensaje de error de código postal
     - expect: [data-test=proceed-3] queda habilitado (hallazgo: el sitio no valida el formato del código postal; documentar como defecto en el reporte)
   5. Paso 2b: sobrescribir [data-test=street]='Calle Falsa', [data-test=city]='Ciudad Test', [data-test=state]='Estado Test' y clic en [data-test=proceed-3].
+    - expect: CheckoutPage.overwriteAddress reintenta hasta que los tres valores se mantengan: el autocompletado puede responder después de escribir y pisar la calle (falla intermitente observada con "Berge Locks")
     - expect: Los tres campos conservan el valor ingresado
     - expect: Avanza al paso 'Payment' con [data-test=payment-method] y [data-test=finish] deshabilitado
   6. Paso 3 (credit-card, vacío): en [data-test=payment-method] seleccionar 'Credit Card' (credit-card); NO escribir en los campos; preparar waitForRequest a POST **/payment/check y clic en [data-test=finish] ('Check payment').
     - expect: Aparecen [data-test=credit_card_number], [data-test=expiration_date], [data-test=cvv] y [data-test=card_holder_name] con sus textos de ayuda
     - expect: [data-test=finish] habilitado con el texto 'Check payment'
-    - expect: Se envía POST /payment/check; se muestra "Unknown error" en [data-test=payment-error-message] (div.alert.alert-danger)
+    - expect: Se envía POST /payment/check y el servidor responde 422 con message "The payment details.credit card number field is required. (and 3 more errors)" y un error por campo en errors: payment_details.credit_card_number, payment_details.expiration_date, payment_details.cvv y payment_details.card_holder_name
+    - expect: La interfaz no muestra esos errores por campo: solo "Unknown error" en [data-test=payment-error-message] (div.alert.alert-danger) (posible defecto de la interfaz)
+    - expect: No se envía ningún POST a /invoices (no se crea orden)
     - expect: NO aparece "Payment was successful" ni el botón 'Confirm'; no hay petición a /invoices/guest ni se muestra "Thanks for your order"
     - expect: IMPORTANTE: no pulsar 'Confirm' ni un segundo clic en finish si el botón cambiara a 'Confirm'
   7. Paso 4 (bank-transfer, vacío): en [data-test=payment-method] seleccionar 'Bank Transfer'; no escribir en los campos.
@@ -255,7 +268,7 @@ HALLAZGOS VERIFICADOS (2026-10-20, flujo guest, sin escribir datos financieros, 
 **NO VERIFICADO (TC-005):**
 
 - Textos de error por campo: no existen en Billing ni en Payment (solo estado ng-invalid y botón deshabilitado); podrían existir tras algún evento no probado (p.ej. submit con teclado).
-- Si "Unknown error" con credit-card vacío es un defecto del backend (mensaje poco claro) o comportamiento esperado.
+- Si "Unknown error" con credit-card vacío es el comportamiento esperado de la interfaz o un defecto: el servidor sí devuelve errores claros por campo (422), pero la pantalla no los muestra.
 - Otros códigos postales inválidos (otros países, vacío con otros campos llenos) y validación server-side de dirección vía /invoices/guest.
 - Métodos buy-now-pay-later y gift-card (campos y validaciones): no explorados.
 - Comportamiento con sesión iniciada (el caso dice "usuario de prueba"; se exploró solo el flujo guest).

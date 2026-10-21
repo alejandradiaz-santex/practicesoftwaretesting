@@ -23,8 +23,12 @@ test.describe('Búsqueda y filtros', () => {
     await searchBox.fill('hammer');
     await page.getByTestId('search-submit').click();
     const searchResponse = await searchResponsePromise;
-    // verify what payload have
+    expect(searchResponse.status()).toBe(200);
+    // Verifica lo que tiene el Payload
     expect(searchResponse.request().postData()).toContain('"q":"hammer"');
+    // Verifica que la busqueda me traiga resultados
+    const searchBody = await searchResponse.json();
+    expect(searchBody.data.length).toBeGreaterThan(0);
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/');
     await expect(page.getByTestId('search-caption')).toHaveText('Searched for: hammer');
     await expect(productCards.first()).toBeVisible();
@@ -54,9 +58,10 @@ test.describe('Búsqueda y filtros', () => {
     );
     const hammerCheckbox = page.getByRole('checkbox', { name: 'Hammer', exact: true });
     await hammerCheckbox.check();
-    const categoryResponse = await categoryResponsePromise;
-    const categoryId = await hammerCheckbox.getAttribute('value'); //take the category ID
-    //Validates the payload has by_category: with the category ID selected
+    const categoryResponse = await categoryResponsePromise; 
+    const categoryId = await hammerCheckbox.getAttribute('value');//toma el ID de la categoria
+    expect(categoryResponse.status()).toBe(200);
+    //Valida que el payload tiene by_category: con el ID de la categoria seleccionada
     expect(categoryResponse.request().postData()).toContain(`"by_category":"${categoryId}"`);
     await expect(hammerCheckbox).toBeChecked();
     await expect(page.getByRole('checkbox', { name: 'Hand Tools', exact: true })).not.toBeChecked();

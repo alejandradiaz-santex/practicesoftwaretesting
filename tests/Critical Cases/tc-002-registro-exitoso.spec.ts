@@ -1,13 +1,18 @@
 // spec: specs/checkout.md
 // seed: tests/seed.spec.ts
 import { test, expect } from '@playwright/test';
+import { randomBytes } from 'crypto';
+
+/** Contrasena valida (8+ caracteres, mayusculas, minusculas, numero y simbolo) generada en cada ejecucion. */
+function generatePassword(): string {
+  return `Aa1!${randomBytes(9).toString('base64url')}`;
+}
 
 test.describe('Registro de cuenta', () => {
   test('TC-002: Registro de Cuenta exitoso', async ({ page }) => {
-    const password = process.env.TC002_PASSWORD; // La contrasena viene de la variable de entorno TC002_PASSWORD.
-    if (!password) {
-      throw new Error('Defina la variable de entorno TC002_PASSWORD (contrasena valida: 8+ caracteres, mayusculas, minusculas, numero y simbolo) para ejecutar TC-002.');
-    }
+    // La cuenta es descartable y el test no vuelve a iniciar sesion: la contrasena se genera en cada
+    // ejecucion y no se guarda. Si se define TC002_PASSWORD (opcional), se usa esa en su lugar.
+    const password = process.env.TC002_PASSWORD || generatePassword();
 
     const email = `qa.registro+${Date.now()}@example.com`;
     // 1. Abrir la pagina de registro (sin sesion)
@@ -60,16 +65,22 @@ test.describe('Registro de cuenta', () => {
     await expect(page.getByTestId('email')).toHaveValue(email);
 
     // 5. Contrasena desde variable de entorno
-    await page.getByTestId('password').fill(password!);
+    await page.getByTestId('password').fill(password);
     await expect(page.getByTestId('password')).not.toHaveValue('');
 
     // 6. Enviar el registro y verificar 201, redireccion y ausencia de mensaje de exito
-    const registerResponse = page.waitForResponse(
-      (r) => r.url().includes('/users/register') && r.request().method() === 'POST'
-    );
+    // El sitio redirige apenas responde, y despues de navegar el cuerpo ya no se puede leer:
+    // se lee dentro de la ruta, antes de que la pagina reciba la respuesta (la peticion sigue siendo la real).
+    let registerResult: { status: number; body: { email?: string } | null } | undefined;
+    await page.route('**/users/register', async (route) => {
+      const response = await route.fetch();
+      registerResult = { status: response.status(), body: await response.json().catch(() => null) };
+      await route.fulfill({ response });
+    });
     await page.getByTestId('register-submit').click();
-    expect((await registerResponse).status()).toBe(201);
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/auth/login');
+    expect(registerResult?.status).toBe(201);
+    expect(registerResult?.body?.email).toBe(email);
     await expect(page.getByText(/success|registered|account (was )?created/i)).toHaveCount(0);
   });
 });
