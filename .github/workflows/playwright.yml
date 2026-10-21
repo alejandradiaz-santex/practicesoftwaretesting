@@ -1,53 +1,29 @@
 name: Playwright Tests
-
-# Ejecucion MANUAL: Actions > Playwright Tests > Run workflow.
-# No corre en los pull requests porque Cloudflare puede mostrar una verificacion anti-bots a las
-# maquinas de GitHub y los tests fallan por eso, no por el codigo. Cada corrida completa crea una
-# orden (TC-001) y una cuenta (TC-002) en el sitio demo.
 on:
-  workflow_dispatch:
-    inputs:
-      project:
-        description: 'Navegador a ejecutar'
-        required: true
-        default: chromium
-        type: choice
-        options:
-          - chromium
-          - firefox
-          - webkit
-
-permissions:
-  contents: read
-
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 jobs:
   test:
-    name: Playwright (${{ inputs.project }})
-    timeout-minutes: 30
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps ${{ inputs.project }}
-
-      - name: Run Playwright tests
-        run: npx playwright test --project=${{ inputs.project }}
-
-      - name: Upload Playwright report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 14
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: |
+          playwright-report/
+          test-results/
+        retention-days: 30
