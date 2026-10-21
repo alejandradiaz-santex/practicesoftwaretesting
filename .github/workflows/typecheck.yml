@@ -1,0 +1,35 @@
+name: Type check
+
+# Corre en cada pull request: solo el chequeo de tipos de TypeScript.
+# Los tests de Playwright se lanzan a mano (ver playwright.yml): Cloudflare bloquea con una
+# verificacion anti-bots a las maquinas de GitHub cuando navegan el sitio demo.
+on:
+  pull_request:
+
+# Si se sube otro commit al mismo PR, cancela la corrida anterior.
+concurrency:
+  group: typecheck-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: Type check (tsc)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Valida los tipos de los .ts (config, Page Objects y tests) sin generar archivos.
+      - name: Type-check TypeScript
+        run: npx tsc --noEmit

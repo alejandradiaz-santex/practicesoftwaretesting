@@ -13,6 +13,7 @@ Plan para TC-001 "Compra Exitosa como Guest" en Toolshop (https://practicesoftwa
 - **Validaciones por API que ya hace cada test:** TC-001 `POST /invoices/guest` 201 e `invoice_number`; TC-002 `POST /users/register` 201 con el email (el cuerpo se lee dentro de `page.route` porque el sitio redirige enseguida); TC-003 `PUT` de cantidad 200 con la cantidad enviada; TC-004 el cuerpo de las peticiones de búsqueda y filtro; TC-005 `POST /payment/check` 422 con un error por campo y que no se envíe ningún `POST` a `/invoices`.
 - **Tiempos:** el catálogo (TC-004) y el total del carrito (TC-003) pueden tardar; sus primeras esperas usan 15 s.
 - **Efectos en el sitio demo:** TC-001 crea una orden guest y TC-002 crea una cuenta en cada ejecución; TC-003, TC-004 y TC-005 no crean datos.
+- **CI (GitHub Actions):** en cada pull request corre solo el chequeo de tipos (`typecheck.yml`). Los tests de Playwright se lanzan a mano (`playwright.yml`, *Run workflow*) porque Cloudflare puede mostrar una verificación anti-bots a las máquinas de GitHub y los tests fallan por eso, no por el código.
 
 ## Test Scenarios
 

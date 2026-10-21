@@ -1,21 +1,28 @@
 name: Playwright Tests
 
-# Corre los tests en cada pull request (a cualquier rama) y guarda el reporte solo si fallan.
+# Ejecucion MANUAL: Actions > Playwright Tests > Run workflow.
+# No corre en los pull requests porque Cloudflare puede mostrar una verificacion anti-bots a las
+# maquinas de GitHub y los tests fallan por eso, no por el codigo. Cada corrida completa crea una
+# orden (TC-001) y una cuenta (TC-002) en el sitio demo.
 on:
-  pull_request:
-
-# Si se sube otro commit al mismo PR, cancela la corrida anterior:
-# cada corrida crea una orden y una cuenta en el sitio demo.
-concurrency:
-  group: playwright-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Navegador a ejecutar'
+        required: true
+        default: chromium
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
 
 permissions:
   contents: read
 
 jobs:
   test:
-    name: Playwright (chromium)
+    name: Playwright (${{ inputs.project }})
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -29,22 +36,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # =========================================================================
-      # 🟢 NUEVO: Validación de Tipos Estricta
-      # tsc --noEmit valida que no haya errores de tipos en tus archivos .ts
-      # sin generar archivos .js innecesarios en el servidor.
-      # =========================================================================
-      - name: Type-check TypeScript
-        run: npx tsc --noEmit
-      # =========================================================================
-
       - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps ${{ inputs.project }}
 
-      # Solo chromium: TC-001 crea una orden y TC-002 una cuenta en cada corrida.
-      # Para correr los tres navegadores, quitar --project y la instalación acotada de arriba.
       - name: Run Playwright tests
-        run: npx playwright test --project=chromium
+        run: npx playwright test --project=${{ inputs.project }}
 
       - name: Upload Playwright report
         if: failure()
