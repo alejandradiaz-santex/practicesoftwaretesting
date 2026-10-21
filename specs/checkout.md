@@ -7,13 +7,17 @@ Plan para TC-001 "Compra Exitosa como Guest" en Toolshop (https://practicesoftwa
 ## Implementación
 
 - **Tests:** `tests/Critical Cases/`: tc-001-compra-guest, tc-002-registro-exitoso, tc-003-cantidades-totales, tc-004-busqueda-filtros y tc-005-checkout-invalido (`.spec.ts`).
-- **Page Object:** `tests/pages/checkout.page.ts` (`CheckoutPage`): pasos Cart, Sign in como guest, Billing Address y Payment. Lo usan TC-001, TC-003 y TC-005. Agregar el producto al carrito sigue escrito en cada test.
+- **Page Objects (`tests/pages/`):**
+  - `catalog.page.ts` (`CatalogPage`): abrir el catálogo, abrir un producto por nombre, agregar al carrito (espera el aviso), buscar, limpiar la búsqueda y filtrar por categoría; `search` y `filterByCategory` devuelven la respuesta del servidor para que el test la valide. Lo usan TC-001, TC-003, TC-004 y TC-005.
+  - `checkout.page.ts` (`CheckoutPage`): pasos Cart, Sign in como guest, Billing Address y Payment. Lo usan TC-001, TC-003 y TC-005. TC-002 no usa ninguno.
+  - Las verificaciones (textos, conteos, códigos de estado) se quedan en los tests, no en los Page Objects.
 - **Locators:** solo por rol o `data-test` (`testIdAttribute: 'data-test'` en `playwright.config.ts`); nunca CSS ni XPath.
 - **Contraseña de TC-002:** la cuenta es descartable y el test no vuelve a iniciar sesión, así que la contraseña se genera en cada ejecución (cumple las reglas del sitio) y no se guarda. Si se define la variable de entorno `TC002_PASSWORD` (por ejemplo en `.env`, que está en `.gitignore`), se usa esa. No hace falta ningún secreto en GitHub Actions.
-- **Validaciones por API que ya hace cada test:** TC-001 `POST /invoices/guest` 201 e `invoice_number`; TC-002 `POST /users/register` 201 con el email (el cuerpo se lee dentro de `page.route` porque el sitio redirige enseguida); TC-003 `PUT` de cantidad 200 con la cantidad enviada; TC-004 el cuerpo de las peticiones de búsqueda y filtro; TC-005 `POST /payment/check` 422 con un error por campo y que no se envíe ningún `POST` a `/invoices`.
-- **Tiempos:** el catálogo (TC-004) y el total del carrito (TC-003) pueden tardar; sus primeras esperas usan 15 s.
+- **Validaciones por API que ya hace cada test:** TC-001 `POST /invoices/guest` 201 e `invoice_number`; TC-002 `POST /users/register` 201 con el email (el cuerpo se lee dentro de `page.route` porque el sitio redirige enseguida); TC-003 `PUT` de cantidad 200 con la cantidad enviada; TC-004 estado 200 y el cuerpo de las peticiones de búsqueda y filtro, más de 0 productos en la respuesta y que las tarjetas del filtro coincidan con la cantidad que devolvió el servidor; TC-005 `POST /payment/check` 422 con un error por campo y que no se envíe ningún `POST` a `/invoices`.
+- **Tiempos:** el catálogo (TC-004), el carrito (`CheckoutPage.openCart` espera hasta 15 s al `product-title`) y el total del carrito (TC-003) pueden tardar; sus esperas usan 15 s.
+- **Producto de prueba:** se define en `tests/data/product.ts`, que exporta `product` (`name` y `price`) y `money(...)` (formato `$48.41`); lo usan TC-001, TC-003 y TC-005, y los totales como el de cantidad 2 se calculan a partir del precio. Hoy es Bolt Cutters, 48,41 USD. "Combination Pliers" (14,15 USD) se quedó sin stock en el sitio demo y su botón de agregar queda deshabilitado; los hallazgos de exploración de este documento se hicieron con ese producto. TC-001 consume una unidad de stock por ejecución.
 - **Efectos en el sitio demo:** TC-001 crea una orden guest y TC-002 crea una cuenta en cada ejecución; TC-003, TC-004 y TC-005 no crean datos.
-- **CI (GitHub Actions):** en cada pull request corre solo el chequeo de tipos (`typecheck.yml`). Los tests de Playwright se lanzan a mano (`playwright.yml`, *Run workflow*) porque Cloudflare puede mostrar una verificación anti-bots a las máquinas de GitHub y los tests fallan por eso, no por el código.
+- **CI (GitHub Actions):** `typecheck.yml` corre `tsc --noEmit` en cada pull request. `playwright.yml` corre los tests solo en Firefox, en cada push y pull request hacia `main` o `master`, y sube `playwright-report/` y `test-results/`. Cloudflare puede mostrar una verificación anti-bots a las máquinas de GitHub: en una corrida con Chromium bloqueó TC-002 y TC-003, mientras que Firefox pasó; no es un defecto del código y no se intenta esquivar.
 
 ## Test Scenarios
 
@@ -28,13 +32,13 @@ Plan para TC-001 "Compra Exitosa como Guest" en Toolshop (https://practicesoftwa
 **Steps:**
   1. Precondición: sesión no iniciada, carrito vacío (contexto nuevo). Paso 1: abrir https://practicesoftwaretesting.com sin iniciar sesión.
     - expect: Se muestra el catálogo; el menú muestra el enlace 'Sign in' ([data-test=nav-sign-in]) y no hay usuario logueado
-  2. Paso 2: en el catálogo hacer clic en el producto 'Combination Pliers' (heading) y, en la ficha, verificar nombre ([data-test=product-name]) y precio ([data-test=unit-price]); clic en [data-test=add-to-cart] ('Add to cart') con cantidad 1.
-    - expect: URL /product/<id> con título 'Combination Pliers'
-    - expect: Precio mostrado 14.15 (USD $14.15)
+  2. Paso 2: en el catálogo hacer clic en el producto 'Bolt Cutters' (heading) y, en la ficha, verificar nombre ([data-test=product-name]) y precio ([data-test=unit-price]); clic en [data-test=add-to-cart] ('Add to cart') con cantidad 1.
+    - expect: URL /product/<id> con título 'Bolt Cutters'
+    - expect: Precio mostrado 48.41 (USD $48.41)
     - expect: El contador del carrito ([data-test=cart-quantity]) pasa a 1
     - expect: Toast de éxito "Product added to shopping cart." (dentro de #toast-container, role=alert)
   3. Paso 3a: clic en el ícono del carrito [data-test=nav-cart].
-    - expect: Navega a /checkout, paso 'Cart' con 'Combination Pliers' ([data-test=product-title]), product-price $14.15, line-price $14.15, cart-total $14.15, cantidad 1
+    - expect: Navega a /checkout, paso 'Cart' con 'Bolt Cutters' ([data-test=product-title]), product-price $48.41, line-price $48.41, cart-total $48.41, cantidad 1
   4. Paso 3b: clic en [data-test=proceed-1] ('Proceed to checkout').
     - expect: Se muestra el paso 'Sign in' con pestañas 'Sign in' (activa, formulario Login) y 'Continue as Guest'
   5. Paso 3c: clic en la pestaña 'Continue as Guest' (getByRole('tab', {name:'Continue as Guest'})).
@@ -122,32 +126,32 @@ Hallazgos VERIFICADOS: (1) Carrito vacío al inicio: en /checkout no existe [dat
 **Steps:**
   1. Precondición: sin sesión, carrito vacío (contexto nuevo). Verificar el estado inicial abriendo el sitio.
     - expect: No existe [data-test=nav-cart] ni [data-test=cart-quantity] en el navbar
-  2. Paso 1: en el catálogo hacer clic en el enlace 'Combination Pliers' (getByRole('link', { name: /Combination Pliers/ })) y, en la ficha, clic en [data-test=add-to-cart] con cantidad 1. Nunca navegar por URL guardada.
-    - expect: URL /product/<id> con título 'Combination Pliers'
+  2. Paso 1: en el catálogo hacer clic en el enlace 'Bolt Cutters' (getByRole('link', { name: /Bolt Cutters/ })) y, en la ficha, clic en [data-test=add-to-cart] con cantidad 1. Nunca navegar por URL guardada.
+    - expect: URL /product/<id> con título 'Bolt Cutters'
     - expect: Toast "Product added to shopping cart."
     - expect: [data-test=cart-quantity] muestra 1
     - expect: Plan B si aparece "The selected product id is invalid." (o POST /carts/{id} 422): volver al catálogo en contexto nuevo y reintentar (máx. 2); documentar como advertencia
   3. Paso 2: clic en [data-test=nav-cart] y abrir el paso Cart.
-    - expect: URL /checkout; [data-test=product-title] 'Combination Pliers'
+    - expect: URL /checkout; [data-test=product-title] 'Bolt Cutters'
     - expect: [data-test=product-quantity] con valor 1
-    - expect: [data-test=product-price] '$14.15' (igual al precio de la ficha)
-    - expect: [data-test=line-price] '$14.15' y [data-test=cart-total] '$14.15'
+    - expect: [data-test=product-price] '$48.41' (igual al precio de la ficha)
+    - expect: [data-test=line-price] '$48.41' y [data-test=cart-total] '$48.41'
   4. Paso 3: en [data-test=product-quantity] escribir 2 y salir del campo (press Tab); alternativa: ArrowUp.
     - expect: Toast "Product quantity updated."
-    - expect: [data-test=line-price] '$28.30' y [data-test=cart-total] '$28.30'
+    - expect: [data-test=line-price] '$96.82' y [data-test=cart-total] '$96.82'
     - expect: [data-test=cart-quantity] muestra 2
     - expect: (aserción con auto-retry: el total se actualiza después del evento change)
   5. Paso 4: escribir 1 y Tab.
-    - expect: [data-test=line-price] '$14.15', [data-test=cart-total] '$14.15', [data-test=cart-quantity] 1
+    - expect: [data-test=line-price] '$48.41', [data-test=cart-total] '$48.41', [data-test=cart-quantity] 1
   6. Paso 5a: escribir 0 y Tab.
-    - expect: El valor 0 NO se acepta: el input vuelve a 1 (toHaveValue('1')); line-price y cart-total '$14.15'; el ítem sigue en el carrito
+    - expect: El valor 0 NO se acepta: el input vuelve a 1 (toHaveValue('1')); line-price y cart-total '$48.41'; el ítem sigue en el carrito
     - expect: No se muestra mensaje de error; sí el toast "Product quantity updated." (el cliente envía quantity=1)
     - expect: No asertar el estado transitorio "$0.00" del line-price antes del blur
   7. Paso 5b: escribir -1 y Tab.
-    - expect: El valor -1 NO se acepta: el input vuelve a 1; line-price y cart-total '$14.15'; ítem presente; sin mensaje de error
-    - expect: No asertar el estado transitorio "$-14.15" antes del blur
-  8. Paso 6: dejar la cantidad en 2 (escribir 2 + Tab, esperar $28.30) y recargar la página (page.reload()).
-    - expect: Sigue en /checkout con 'Combination Pliers', cantidad 2, line-price y cart-total '$28.30', cart-quantity 2
+    - expect: El valor -1 NO se acepta: el input vuelve a 1; line-price y cart-total '$48.41'; ítem presente; sin mensaje de error
+    - expect: No asertar el estado transitorio "$-48.41" antes del blur
+  8. Paso 6: dejar la cantidad en 2 (escribir 2 + Tab, esperar $96.82) y recargar la página (page.reload()).
+    - expect: Sigue en /checkout con 'Bolt Cutters', cantidad 2, line-price y cart-total '$96.82', cart-quantity 2
   9. Paso 7 (PENDIENTE, no automatizado): eliminar el producto con el botón rojo del carrito. Ese botón no tiene nombre accesible ni data-test, así que no hay locator por rol/data-test y el paso quedó como TODO en el test (no se usa CSS).
     - expect: Toast "Product deleted."
     - expect: app-cart muestra el texto "The cart is empty. Nothing to display." sin tabla ni [data-test=proceed-1]
@@ -233,7 +237,7 @@ HALLAZGOS VERIFICADOS (2026-10-20, flujo guest, sin escribir datos financieros, 
 **File:** `tests/Critical Cases/tc-005-checkout-invalido.spec.ts`
 
 **Steps:**
-  1. Precondición: contexto nuevo, sin sesión, carrito vacío. En el catálogo (https://practicesoftwaretesting.com) abrir el enlace 'Combination Pliers' (getByRole('link', { name: /Combination Pliers/ }); nunca por URL guardada), clic en [data-test=add-to-cart], clic en [data-test=nav-cart], clic en [data-test=proceed-1].
+  1. Precondición: contexto nuevo, sin sesión, carrito vacío. En el catálogo (https://practicesoftwaretesting.com) abrir el enlace 'Bolt Cutters' (getByRole('link', { name: /Bolt Cutters/ }); nunca por URL guardada), clic en [data-test=add-to-cart], clic en [data-test=nav-cart], clic en [data-test=proceed-1].
     - expect: Toast "Product added to shopping cart."
     - expect: Paso Sign in con pestañas 'Sign in' y 'Continue as Guest'
     - expect: Plan B si aparece "The selected product id is invalid.": volver al catálogo en contexto nuevo y reintentar (máx. 2)

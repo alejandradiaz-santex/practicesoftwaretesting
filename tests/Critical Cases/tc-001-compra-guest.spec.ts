@@ -1,32 +1,33 @@
 // spec: specs/checkout.md
 // seed: tests/seed.spec.ts
 import { test, expect } from '@playwright/test';
+import { CatalogPage } from '../pages/catalog.page';
+import { product, money } from '../data/product';
 import { CheckoutPage } from '../pages/checkout.page';
 
 test.describe('Checkout como Guest', () => {
   test('TC-001: Compra Exitosa como Guest', async ({ page }) => {
     // 1. Abrir el sitio sin iniciar sesion (carrito vacio, contexto nuevo)
-    await page.goto('https://practicesoftwaretesting.com');
-    await expect(page.getByTestId('nav-sign-in')).toBeVisible();
-    await expect(page.getByRole('link', { name: /Combination Pliers/ })).toBeVisible();
+    const catalog = new CatalogPage(page);
+    await catalog.goto();
+    await expect(catalog.navSignIn).toBeVisible();
+    await expect(catalog.productLink(product.name)).toBeVisible();
 
-    // 2. Abrir 'Combination Pliers' desde el catalogo y agregar al carrito (cantidad 1)
-    await page.getByRole('link', { name: /Combination Pliers/ }).click();
-    await expect(page).toHaveURL(/\/product\/.+/);
-    await expect(page.getByTestId('product-name')).toHaveText(/Combination Pliers/);
-    await expect(page.getByTestId('unit-price')).toHaveText('14.15');
-    await page.getByTestId('add-to-cart').click();
-    await expect(page.getByRole('alert').filter({ hasText: 'Product added to shopping cart.' }).first()).toBeVisible();
+    // 2. Abrir el producto desde el catalogo y agregar al carrito (cantidad 1)
+    await catalog.openProduct(product.name);
+    await expect(catalog.productName).toContainText(product.name);
+    await expect(catalog.unitPrice).toHaveText(product.price.toFixed(2));
+    await catalog.addToCart();
     await expect(page.getByTestId('cart-quantity')).toHaveText('1');
 
     // 3. Paso 3a: abrir el carrito
     const checkout = new CheckoutPage(page);
     await checkout.openCart();
-    await expect(checkout.productTitle).toContainText('Combination Pliers');
-    await expect(checkout.productPrice).toHaveText('$14.15');
-    await expect(checkout.linePrice).toHaveText('$14.15');
-    await expect(checkout.cartTotal).toHaveText('$14.15');
-    await expect(checkout.quantityOf('Combination Pliers')).toHaveValue('1');
+    await expect(checkout.productTitle).toContainText(product.name);
+    await expect(checkout.productPrice).toHaveText(money(product.price));
+    await expect(checkout.linePrice).toHaveText(money(product.price));
+    await expect(checkout.cartTotal).toHaveText(money(product.price));
+    await expect(checkout.quantityOf(product.name)).toHaveValue('1');
 
     // 4-7. Pasos 3b a 4a-bis: Sign in como guest hasta Billing Address
     await checkout.proceedToSignIn();

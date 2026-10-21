@@ -1,6 +1,8 @@
 // spec: specs/checkout.md
 // seed: tests/seed.spec.ts
 import { test, expect } from '@playwright/test';
+import { CatalogPage } from '../pages/catalog.page';
+import { product } from '../data/product';
 import { CheckoutPage } from '../pages/checkout.page';
 
 test.describe('Checkout con datos inválidos', () => {
@@ -13,10 +15,10 @@ test.describe('Checkout con datos inválidos', () => {
 
     // 1-2. Precondicion: producto desde el catalogo, carrito y datos de guest hasta Billing Address
     const checkout = new CheckoutPage(page);
-    await page.goto('https://practicesoftwaretesting.com');
-    await page.getByRole('link', { name: /Combination Pliers/ }).click();
-    await page.getByTestId('add-to-cart').click();
-    await expect(page.getByRole('alert').filter({ hasText: 'Product added to shopping cart.' }).first()).toBeVisible();
+    const catalog = new CatalogPage(page);
+    await catalog.goto();
+    await catalog.openProduct(product.name);
+    await catalog.addToCart();
     await checkout.goToBillingAsGuest({ email: 'guest.qa@example.com', firstName: 'Ana', lastName: 'Prueba' });
 
     // 3. Paso 1: campos obligatorios vacios (focus + blur)

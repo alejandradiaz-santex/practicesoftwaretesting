@@ -1,28 +1,22 @@
 // spec: specs/checkout.md
 // seed: tests/seed.spec.ts
 import { test, expect } from '@playwright/test';
+import { CatalogPage } from '../pages/catalog.page';
 
 test.describe('Búsqueda y filtros', () => {
   test('TC-004: Búsqueda por Producto o filtrando por Categoría', async ({ page }) => {
-    const searchBox = page.getByTestId('search-query');
-    //encuentra todos los elementos con data-test="product-name", que son los nombres de los productos listados
-    const productNames = page.getByTestId('product-name');
-    // Encuentra cada tarjeta del producto: enlaces que contienen un heading de nivel 5 (nombre del producto)
-    const productCards = page.getByRole('link').filter({ has: page.getByRole('heading', { level: 5 }) });
+    const catalog = new CatalogPage(page);
 
     // 1. Precondicion: catalogo sin busqueda ni filtros
-    await page.goto('https://practicesoftwaretesting.com');
+    await catalog.goto();
     // El catalogo puede tardar en cargar (sobre todo en Firefox): primera espera con mas margen.
-    await expect(productCards.first()).toBeVisible({ timeout: 15000 });
-    await expect(searchBox).toBeVisible();
-    await expect(page.getByTestId('search-submit')).toBeVisible();
-    await expect(page.getByTestId('search-caption')).toHaveCount(0); // Searched for: label
+    await expect(catalog.productCards.first()).toBeVisible({ timeout: 15000 });
+    await expect(catalog.searchBox).toBeVisible();
+    await expect(catalog.searchSubmit).toBeVisible();
+    await expect(catalog.searchCaption).toHaveCount(0); // Searched for: label
 
     // 2. Paso 1: buscar "hammer"
-    const searchResponsePromise = page.waitForResponse((r) => r.url().includes('/products/search'));
-    await searchBox.fill('hammer');
-    await page.getByTestId('search-submit').click();
-    const searchResponse = await searchResponsePromise;
+    const searchResponse = await catalog.search('hammer');
     expect(searchResponse.status()).toBe(200);
     // Verifica lo que tiene el Payload
     expect(searchResponse.request().postData()).toContain('"q":"hammer"');
@@ -30,43 +24,44 @@ test.describe('Búsqueda y filtros', () => {
     const searchBody = await searchResponse.json();
     expect(searchBody.data.length).toBeGreaterThan(0);
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/');
-    await expect(page.getByTestId('search-caption')).toHaveText('Searched for: hammer');
-    await expect(productCards.first()).toBeVisible();
-    expect(await productCards.count()).toBeGreaterThanOrEqual(1);
+    await expect(catalog.searchCaption).toHaveText('Searched for: hammer');
+    await expect(catalog.productCards.first()).toBeVisible();
+    expect(await catalog.productCards.count()).toBeGreaterThanOrEqual(1);
     // Ningun producto listado carece de "hammer" en el nombre
-    await expect(productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+    await expect(catalog.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
 
     // 3. Paso 2: buscar "xyzzy" (sin resultados)
-    await searchBox.fill('xyzzy');
-    await page.getByTestId('search-submit').click();
-    await expect(page.getByTestId('search-caption')).toHaveText('Searched for: xyzzy');
-    await expect(page.getByTestId('no-results')).toBeVisible();
-    await expect(page.getByTestId('no-results')).toHaveText('There are no products found.');
-    await expect(productCards).toHaveCount(0);
+    await catalog.search('xyzzy');
+    await expect(catalog.searchCaption).toHaveText('Searched for: xyzzy');
+    await expect(catalog.noResults).toBeVisible();
+    await expect(catalog.noResults).toHaveText('There are no products found.');
+    await expect(catalog.productCards).toHaveCount(0);
 
     // 4. Paso 3a: limpiar la busqueda
-    await page.getByTestId('search-reset').click();
-    await expect(searchBox).toHaveValue('');
-    await expect(page.getByTestId('search-caption')).toHaveCount(0);
-    await expect(page.getByTestId('no-results')).toHaveCount(0);
-    await expect(productCards.first()).toBeVisible();
-    await expect(productCards).toHaveCount(9);
+    await catalog.resetSearch();
+    await expect(catalog.searchBox).toHaveValue('');
+    await expect(catalog.searchCaption).toHaveCount(0);
+    await expect(catalog.noResults).toHaveCount(0);
+    await expect(catalog.productCards.first()).toBeVisible();
+    await expect(catalog.productCards).toHaveCount(9);
 
     // 5. Paso 3b: filtrar por la categoria Hammer
-    const categoryResponsePromise = page.waitForResponse(
-      (r) => r.url().includes('/products') && !r.url().includes('/products/search') && r.request().postData()?.includes('by_category') === true
-    );
-    const hammerCheckbox = page.getByRole('checkbox', { name: 'Hammer', exact: true });
-    await hammerCheckbox.check();
-    const categoryResponse = await categoryResponsePromise; 
+    const categoryResponse = await catalog.filterByCategory('Hammer');
+    const hammerCheckbox = catalog.categoryCheckbox('Hammer');
     const categoryId = await hammerCheckbox.getAttribute('value');//toma el ID de la categoria
     expect(categoryResponse.status()).toBe(200);
     //Valida que el payload tiene by_category: con el ID de la categoria seleccionada
     expect(categoryResponse.request().postData()).toContain(`"by_category":"${categoryId}"`);
     await expect(hammerCheckbox).toBeChecked();
-    await expect(page.getByRole('checkbox', { name: 'Hand Tools', exact: true })).not.toBeChecked();
-    await expect(productCards).toHaveCount(7);
-    await expect(productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+    // El sitio puede tener mas de una categoria llamada "Hand Tools": ninguna debe quedar marcada
+    for (const handTools of await catalog.categoryCheckbox('Hand Tools').all()) {
+      await expect(handTools).not.toBeChecked();
+    }
+    // La pantalla muestra exactamente los productos que devolvio el servidor (no depende de cuantos haya)
+    const categoryBody = await categoryResponse.json();
+    expect(categoryBody.data.length).toBeGreaterThan(0);
+    await expect(catalog.productCards).toHaveCount(categoryBody.data.length);
+    await expect(catalog.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
     await expect(page.getByText('Sledgehammer')).toBeVisible();
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/');
   });

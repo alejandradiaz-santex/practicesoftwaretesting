@@ -68,6 +68,8 @@ export class CheckoutPage {
   async openCart() {
     await this.navCart.click();
     await expect(this.page).toHaveURL(/\/checkout/);
+    // El carrito se carga despues de la pagina (puede tardar, sobre todo en Firefox)
+    await expect(this.productTitle).toBeVisible({ timeout: 15000 });
   }
 
   async setQuantity(product: string, value: string) {
