@@ -29,6 +29,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # =========================================================================
+      # 🟢 NUEVO: Validación de Tipos Estricta
+      # tsc --noEmit valida que no haya errores de tipos en tus archivos .ts
+      # sin generar archivos .js innecesarios en el servidor.
+      # =========================================================================
+      - name: Type-check TypeScript
+        run: npx tsc --noEmit
+      # =========================================================================
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
