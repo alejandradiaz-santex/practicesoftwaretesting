@@ -9,3 +9,7 @@ node_modules/
 
 # Variables de entorno locales (contraseñas de prueba)
 .env
+
+# Artefactos locales del MCP de Playwright
+.playwright-mcp/
+scratchpad-cat.yml
