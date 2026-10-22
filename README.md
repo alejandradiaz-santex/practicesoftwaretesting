@@ -13,9 +13,14 @@ para practicar testing.
 | TC-003 | Cantidades y Totales dentro del Carrito | `tc-003-cantidades-totales.spec.ts` |
 | TC-004 | Búsqueda por Producto o filtrando por Categoría | `tc-004-busqueda-filtros.spec.ts` |
 | TC-005 | Checkout con datos inválidos | `tc-005-checkout-invalido.spec.ts` |
+| TC-006 | Ordenar por precio muestra el orden correcto | `tests/QATES/tc-006-ordenar-por-precio.spec.ts` |
+| TC-007 | Login con credenciales inválidas es rechazado | `tests/QATES/tc-007-login-invalido.spec.ts` |
+| TC-008 | Tarjeta, ficha y API muestran el mismo nombre y precio | `tests/QATES/tc-008-tarjeta-ficha-api.spec.ts` |
 
-El diseño de cada caso está en [casos-automatizacion.md](casos-automatizacion.md) y el plan detallado,
-con los hallazgos de la exploración del sitio, en [specs/checkout.md](specs/checkout.md).
+TC-001 a TC-005 están en `tests/Critical Cases/`; TC-006 a TC-008 los generó QATES y están en `tests/QATES/`.
+
+El diseño de los ocho casos está en [casos-automatizacion.md](casos-automatizacion.md) y el plan detallado
+de TC-001 a TC-005, con los hallazgos de la exploración del sitio, en [specs/checkout.md](specs/checkout.md).
 
 ## Requisitos
 
@@ -41,7 +46,8 @@ npx playwright test
 Otras formas:
 
 ```bash
-npx playwright test "tests/Critical Cases"        # solo los casos críticos
+npx playwright test "tests/Critical Cases"        # solo TC-001 a TC-005
+npx playwright test --grep @qates                  # solo los generados por QATES (TC-006 a TC-008)
 npx playwright test "tc-003"                       # un test
 npx playwright test --project=firefox              # un navegador (chromium, firefox o webkit)
 npx playwright show-report                         # abrir el reporte HTML
@@ -60,7 +66,8 @@ existe, el test genera una aleatoria. Puedes ponerla en un archivo `.env` (está
 
 ```
 tests/
-  Critical Cases/   los 5 casos críticos
+  Critical Cases/   TC-001 a TC-005
+  QATES/            TC-006 a TC-008, generados por QATES ([QATES] en el título y etiqueta @qates)
   pages/            Page Objects (CatalogPage, CheckoutPage)
   data/             datos de prueba (product.ts)
   agregar-producto-al-carrito.spec.ts
@@ -76,8 +83,9 @@ specs/              planes de prueba
 
 ## Efectos en el sitio demo y límites
 
-- **TC-001 crea una orden** y **TC-002 crea una cuenta** en cada ejecución; TC-003, TC-004 y TC-005
-  no crean datos.
+- **TC-001 crea una orden** y **TC-002 crea una cuenta** en cada ejecución; TC-003 a TC-008 no crean
+  datos. TC-007 escribe una contraseña ficticia en el login: es un intento fallido, no crea cuenta
+  ni sesión.
 - El stock de los productos es finito: TC-001 consume una unidad por ejecución.
 - Es un sitio compartido cuyos datos cambian: pueden aparecer productos sin stock, categorías
   duplicadas o el sitio caído (error 521 de Cloudflare). Revisa `test-results/<test>/error-context.md`
@@ -88,11 +96,14 @@ specs/              planes de prueba
 
 - `typecheck.yml`: corre `tsc --noEmit` en cada pull request.
 - `playwright.yml`: corre los tests solo en Firefox, en cada push y pull request hacia `main`, y sube
-  `playwright-report/` y `test-results/`.
+  `playwright-report/` y `test-results/`. Toma toda la carpeta `tests/`, así que también corre
+  `tests/QATES/`.
 
 ## Cómo se construyeron los tests
 
-Se usaron los agentes de Playwright que están en `.claude/agents/`:
+Se usaron dos conjuntos de agentes.
+
+**Agentes de Playwright** (`.claude/agents/`):
 
 - **planner:** exploró el sitio y armó el plan de `specs/checkout.md`.
 - **generator:** generó los tests de `tests/Critical Cases/` a partir de ese plan.
@@ -103,6 +114,11 @@ Se usaron los agentes de Playwright que están en `.claude/agents/`:
 | TC-001 | El contador del carrito esperaba `0` y el sitio muestra `1`; el aviso de "Product added" ahora admite varios avisos a la vez |
 | TC-003 | En WebKit el total del carrito a veces no cambiaba tras la cantidad 2; ese paso ahora reintenta |
 | TC-004 | Quitó la exigencia de "hammer" en cada nombre del filtro, porque la categoría tiene un producto con otro nombre; luego se comparó con los nombres que devuelve la API |
+
+**Agentes de QATES:**
+
+- **`qates:qa-analyst`:** propuso los casos críticos iniciales (TC-001 a TC-005, que luego se ajustaron) y los tres casos nuevos (TC-006 a TC-008).
+- **`qates:qa-automator`:** automatizó TC-006 a TC-008 en `tests/QATES/`. Esos tests se reconocen por la carpeta, el comentario inicial `// Generado por QATES`, el prefijo `[QATES]` en el título y la etiqueta `@qates`.
 
 ## Créditos
 
