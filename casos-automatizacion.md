@@ -11,8 +11,11 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
 | **TC-003** | Cantidades y Totales en Carrito | UI + API Check (PUT de cantidad); falta el paso de eliminar | Playwright + TS | `tc-003-cantidades-totales.spec.ts` | ✅ Automatizado (paso 7 pendiente) |
 | **TC-004** | Búsqueda y Filtros | UI (Filtros dinámicos) | Playwright + TS | `tc-004-busqueda-filtros.spec.ts` | ✅ Automatizado |
 | **TC-005** | Checkout con datos inválidos | UI + API Check (`/payment/check`, Negativo) | Playwright + TS | `tc-005-checkout-invalido.spec.ts` | ✅ Automatizado |
+| **TC-006** | Ordenar por precio muestra el orden correcto | UI + API Check (petición de `/products`) | Playwright + TS | `tests/QATES/tc-006-ordenar-por-precio.spec.ts` | ✅ Automatizado (QATES) |
+| **TC-007** | Login con credenciales inválidas es rechazado | UI + API Check (login, Negativo) | Playwright + TS | `tests/QATES/tc-007-login-invalido.spec.ts` | ✅ Automatizado (QATES) |
+| **TC-008** | Tarjeta, ficha y API muestran el mismo nombre y precio | UI + API Check (`/products/{id}`) | Playwright + TS | `tests/QATES/tc-008-tarjeta-ficha-api.spec.ts` | ✅ Automatizado (QATES) |
 
-Los tests están en `tests/Critical Cases/` y el plan detallado en `specs/checkout.md`.
+Los tests TC-001 a TC-005 están en `tests/Critical Cases/` y los generados por QATES (TC-006 a TC-008) en `tests/QATES/`; el plan detallado de TC-001 a TC-005 está en `specs/checkout.md`.
 
 ---
 
@@ -86,3 +89,44 @@ Los tests están en `tests/Critical Cases/` y el plan detallado en `specs/checko
   3. En el pago, elegir credit-card y dejar campos vacíos.
   4. Ahora elegir bank-transfer y dejar campos vacíos.
 - **Esperado:** los campos obligatorios vacíos bloquean el avance; con un código postal inválido el sitio no muestra error y permite avanzar (posible defecto); credit-card con campos vacíos no confirma el pago: el servidor responde 422 con un error por campo, pero la interfaz solo muestra "Unknown error" (posible defecto), y no se crea orden; bank-transfer con campos vacíos deja el botón de pago deshabilitado.
+
+### TC-006: Ordenar por precio muestra los productos en el orden correcto
+- **Descripción:** validar que, al ordenar el catálogo por precio, los productos aparezcan de menor a mayor y de mayor a menor sin ningún precio fuera de lugar.
+- **Precondiciones:** sin sesión iniciada y catálogo sin búsqueda ni filtros.
+- **Datos:** ninguno que se escriba; se usan las opciones del selector de orden "Price (Low - High)" y "Price (High - Low)".
+- **Pasos:**
+  1. Abrir el sitio y leer los precios de las tarjetas de la página 1.
+  2. Elegir "Price (Low - High)" en el selector de orden.
+  3. Leer los precios de las tarjetas.
+  4. Elegir "Price (High - Low)" y leer los precios otra vez.
+- **Esperado:**
+  - Paso 2: la petición a `/products` responde 200 y la URL no cambia.
+  - Paso 3: los precios quedan de menor a mayor, sin ningún par fuera de orden.
+  - Paso 4: los precios quedan de mayor a menor.
+  - En ambos órdenes se muestra la misma cantidad de tarjetas, cada una con un precio en formato `$N.NN`. El orden se aplica en el servidor sobre todo el catálogo, así que la página 1 trae productos distintos en cada orden.
+
+### TC-007: Login con credenciales inválidas es rechazado
+- **Descripción:** validar que el inicio de sesión rechace un usuario inválido, sin iniciar sesión y sin revelar si falló el email o la contraseña.
+- **Precondiciones:** sin sesión iniciada, en `/auth/login`.
+- **Datos:** un email con formato válido que no esté registrado y una contraseña ficticia generada en cada ejecución. No se usa ninguna cuenta real.
+- **Pasos:**
+  1. Abrir `/auth/login`.
+  2. Ingresar el email inexistente y la contraseña ficticia.
+  3. Hacer clic en "Login".
+  4. Verificar la pantalla y la respuesta del servidor.
+- **Esperado:**
+  - No se inicia sesión: la URL sigue en `/auth/login` y el menú sigue mostrando "Sign in".
+  - La interfaz muestra el mensaje **"Invalid email or password"**, que no dice cuál de los dos datos falló.
+  - La API de login responde 401 con el cuerpo `{"error":"Unauthorized"}` y no devuelve token.
+
+### TC-008: Tarjeta, ficha y API muestran el mismo nombre y precio
+- **Descripción:** validar que el nombre y el precio de un producto coincidan en la tarjeta del catálogo, en su ficha y en la API.
+- **Precondiciones:** catálogo accesible, sin sesión, sin filtros ni búsqueda y con al menos una tarjeta visible.
+- **Datos:** ninguno fijo; se usa la primera tarjeta que muestre el catálogo.
+- **Pasos:**
+  1. Abrir el sitio y leer el nombre y el precio de la primera tarjeta.
+  2. Hacer clic en esa tarjeta y leer el nombre y el precio de la ficha.
+  3. Tomar el identificador del producto de la dirección de la ficha (`/product/<id>`).
+  4. Pedir `GET /products/<id>` a la API.
+  5. Comparar las tres fuentes; el precio se compara como número, sin el `$`.
+- **Esperado:** el nombre y el precio de la ficha son iguales a los de la tarjeta, y la API responde 200 con el mismo nombre y el mismo precio.
