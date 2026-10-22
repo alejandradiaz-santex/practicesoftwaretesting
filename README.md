@@ -117,8 +117,8 @@ Se usaron dos conjuntos de agentes.
 
 **Agentes de QATES:**
 
-- **`qates:qa-analyst`:** propuso los casos críticos iniciales (TC-001 a TC-005, que luego se ajustaron) y los tres casos nuevos (TC-006 a TC-008).
-- **`qates:qa-automator`:** automatizó TC-006 a TC-008 en `tests/QATES/`. Esos tests se reconocen por la carpeta, el comentario inicial `// Generado por QATES`, el prefijo `[QATES]` en el título y la etiqueta `@qates`.
+- **`qa-analyst`:** propuso los casos críticos iniciales (TC-001 a TC-005, que luego se ajustaron) y los tres casos nuevos (TC-006 a TC-008).
+- **`qa-automator`:** automatizó TC-006 a TC-008 en `tests/QATES/`. Esos tests se reconocen por la carpeta, el comentario inicial `// Generado por QATES`, el prefijo `[QATES]` en el título y la etiqueta `@qates`.
 
 ## Créditos
 
