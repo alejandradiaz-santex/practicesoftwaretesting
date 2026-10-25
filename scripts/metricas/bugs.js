@@ -1,7 +1,7 @@
 // Calcula dos métricas a partir de docs/bugs/*.md:
 //   1. Reportes completos en formato estándar
-//   2. Bugs reportados al dueño del sitio: el bug cuenta si el archivo tiene una línea
-//      `**Reporte**: https://...` con el enlace al issue o mensaje enviado.
+//   2. Bugs reportados (% de los bugs documentados): el bug cuenta si el archivo tiene
+//      una línea `**Reporte**: https://...` con el enlace al issue o mensaje enviado.
 //
 // Reportes completos en formato estándar:
 // Un reporte está completo si tiene título, severidad, pasos, resultado esperado,
@@ -46,7 +46,7 @@ const filas = archivos.map((f) => {
 });
 
 const si = (b) => (b ? 'Sí' : 'No');
-console.log('| Bug | Título | Severidad | Pasos | Esperado | Actual | Evidencia | Completo | Reportado al dueño |');
+console.log('| Bug | Título | Severidad | Pasos | Esperado | Actual | Evidencia | Completo | Reportado |');
 console.log('|---|---|---|---|---|---|---|---|---|');
 for (const r of filas) {
   const c = r.campos;
@@ -58,4 +58,4 @@ const pct = (a) => (n ? Math.round((a / n) * 100) : 0);
 const completos = filas.filter((r) => r.completo).length;
 const reportados = filas.filter((r) => r.reportado).length;
 console.log(`\nReportes completos en formato estándar: ${completos}/${n} (${pct(completos)}%)`);
-console.log(`Bugs reportados al dueño del sitio:     ${reportados}/${n} (${pct(reportados)}%)`);
+console.log(`Bugs reportados:                        ${reportados}/${n} (${pct(reportados)}%)`);
