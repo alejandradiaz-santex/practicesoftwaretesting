@@ -16,3 +16,6 @@ scratchpad-cat.yml
 
 # Reporte local de uso de agentes QATES
 docs/uso-agentes-qates.md
+
+# Corridas locales para medir tests inestables
+.metricas/
