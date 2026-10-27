@@ -1,7 +1,5 @@
-// Calcula dos métricas a partir de docs/bugs/BUG-*.md (formato de la plantilla de bugs):
-//   1. Reportes completos en formato estándar
-//   2. Bugs reportados (% de los bugs documentados): el archivo tiene una línea
-//      `**Reporte**: https://...` con el enlace al reporte (Notion, Jira, issue...).
+// Calcula "Reportes completos en formato estándar" a partir de docs/bugs/BUG-*.md
+// (formato de la plantilla de bugs).
 //
 // Un reporte está completo si todos los campos de la plantilla tienen valor. Un campo cuenta
 // si trae contenido o un `N/A: motivo`. No cuentan los `[FALTA DATO ...]` ni `PENDIENTE`;
@@ -59,20 +57,17 @@ function evaluar(md) {
   else if (!/captura/i.test(ev)) faltan.push('Evidencia (falta una captura)');
   if (/PENDIENTE/.test(ev)) faltan.push('Evidencia (captura pendiente)');
 
-  const reportado = /^\*\*Reporte\*\*:\s*https?:\/\/\S+/m.test(md);
-  return { faltan, completo: faltan.length === 0, reportado };
+  return { faltan, completo: faltan.length === 0 };
 }
 
 const filas = archivos.map((f) => ({ id: f.replace('.md', ''), ...evaluar(fs.readFileSync(path.join(dir, f), 'utf8')) }));
 
 const si = (b) => (b ? 'Sí' : 'No');
-console.log('| Bug | Completo | Reportado | Qué falta |');
-console.log('|---|---|---|---|');
-for (const r of filas) console.log(`| ${r.id} | ${si(r.completo)} | ${si(r.reportado)} | ${r.faltan.join('; ') || '—'} |`);
+console.log('| Bug | Completo | Qué falta |');
+console.log('|---|---|---|');
+for (const r of filas) console.log(`| ${r.id} | ${si(r.completo)} | ${r.faltan.join('; ') || '—'} |`);
 
 const n = filas.length;
-const pct = (a) => (n ? Math.round((a / n) * 100) : 0);
 const completos = filas.filter((r) => r.completo).length;
-const reportados = filas.filter((r) => r.reportado).length;
-console.log(`\nReportes completos en formato estándar: ${completos}/${n} (${pct(completos)}%)`);
-console.log(`Bugs reportados:                        ${reportados}/${n} (${pct(reportados)}%)`);
+const pct = n ? Math.round((completos / n) * 100) : 0;
+console.log(`\nReportes completos en formato estándar: ${completos}/${n} (${pct}%)`);

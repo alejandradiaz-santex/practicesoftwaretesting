@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Carrito de compras', () => {
   test('Agregar un producto al carrito desde el catálogo y verlo en el carrito con cantidad 1', async ({ page }) => {

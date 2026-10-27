@@ -1,5 +1,6 @@
 // Generado por QATES (qates:qa-automator)
-import { test, expect, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { test, expect } from '../fixtures';
 import { CatalogPage } from '../pages/catalog.page';
 
 /** La API de /products se consulta con el metodo HTTP QUERY (parametros en el cuerpo). */

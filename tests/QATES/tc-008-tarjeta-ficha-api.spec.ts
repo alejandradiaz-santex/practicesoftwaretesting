@@ -1,5 +1,5 @@
 // Generado por QATES (qates:qa-automator)
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 import { CatalogPage } from '../pages/catalog.page';
 
 test.describe('[QATES] Producto: tarjeta, ficha y API coinciden', () => {

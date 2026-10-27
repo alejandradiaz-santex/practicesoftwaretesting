@@ -33,11 +33,11 @@ if (!dirs.length) {
   fs.mkdirSync(dir, { recursive: true });
   for (let i = 1; i <= runs; i++) {
     const salida = path.join(dir, `run${i}.json`);
-    const r = spawnSync(
-      'npx',
-      ['playwright', 'test', ...archivos, `--project=${project}`, '--retries=1', '--workers=1', '--reporter=json'],
-      { env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: salida }, shell: true, stdio: 'ignore' }
-    );
+    // Con shell: true Node concatena los argumentos sin entrecomillar: una ruta con espacios
+    // ("tests/Critical Cases/tc-003") se partiría en dos filtros y correría tests de más.
+    const comillas = (a) => (/[\s"]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a);
+    const comando = ['npx playwright test', ...archivos.map(comillas), `--project=${project}`, '--retries=1', '--workers=1', '--reporter=json'].join(' ');
+    const r = spawnSync(comando, { env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: salida }, shell: true, stdio: 'ignore' });
     console.error(`corrida ${i}/${runs}: exit ${r.status}`);
   }
   dirs.push(dir);
