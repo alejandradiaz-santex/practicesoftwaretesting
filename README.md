@@ -90,7 +90,10 @@ specs/              planes de prueba
 - Es un sitio compartido cuyos datos cambian: pueden aparecer productos sin stock, categorías
   duplicadas o el sitio caído (error 521 de Cloudflare). Revisa `test-results/<test>/error-context.md`
   antes de suponer un defecto del test.
-- Cloudflare puede mostrar una verificación anti-bots a las máquinas de GitHub.
+- Cloudflare puede mostrar una verificación anti-bots a las máquinas de GitHub. Si un test falla con
+  esa pantalla, `tests/fixtures.ts` lo marca como omitido (anotación `cloudflare`) en vez de fallido,
+  porque no pudo ejercitar el sitio. No se intenta esquivar la verificación, y un fallo con la página
+  real del sitio sigue siendo un fallo. Los specs importan `test` y `expect` de `tests/fixtures.ts`.
 
 ## Integración continua
 

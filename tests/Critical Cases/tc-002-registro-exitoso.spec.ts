@@ -1,6 +1,6 @@
 // spec: specs/checkout.md
 // seed: tests/seed.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures';
 import { randomBytes } from 'crypto';
 
 /** Contrasena valida (8+ caracteres, mayusculas, minusculas, numero y simbolo) generada en cada ejecucion. */
