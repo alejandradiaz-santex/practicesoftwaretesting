@@ -3,6 +3,7 @@
 import { test, expect } from '../fixtures';
 import { CatalogPage } from '../pages/catalog.page';
 import { product } from '../data/product';
+import { guest, direccion } from '../data/usuarios';
 import { CheckoutPage } from '../pages/checkout.page';
 
 test.describe('Checkout con datos inválidos', () => {
@@ -19,7 +20,7 @@ test.describe('Checkout con datos inválidos', () => {
     await catalog.goto();
     await catalog.openProduct(product.name);
     await catalog.addToCart();
-    await checkout.goToBillingAsGuest({ email: 'guest.qa@example.com', firstName: 'Ana', lastName: 'Prueba' });
+    await checkout.goToBillingAsGuest(guest); // viene de usuarios.ts
 
     // 3. Paso 1: campos obligatorios vacios (focus + blur)
     for (const id of ['country', 'postal_code', 'house_number', 'street', 'city']) {
@@ -37,7 +38,7 @@ test.describe('Checkout con datos inválidos', () => {
 
     // 4. Paso 2: codigo postal invalido (el sitio igual autocompleta)
     const lookup = page.waitForResponse((r) => r.url().includes('/postcode-lookup') && r.request().method() === 'GET');
-    await checkout.fillAddress({ country: 'AR', postalCode: 'ZZZZ', houseNumber: '123' });
+    await checkout.fillAddress({ ...direccion, postalCode: 'ZZZZ' });
     const lookupResponse = await lookup;
     expect(lookupResponse.status()).toBe(200);
     expect(lookupResponse.url()).toContain('country=AR');

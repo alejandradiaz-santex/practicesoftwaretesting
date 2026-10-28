@@ -60,7 +60,18 @@ de `npx`, o abre una terminal Command Prompt.
 ## Variables de entorno
 
 Ninguna es obligatoria. `TC002_PASSWORD` define la contraseña de la cuenta que crea TC-002; si no
-existe, el test genera una aleatoria. Puedes ponerla en un archivo `.env` (está en `.gitignore`).
+existe, el test genera una aleatoria. Puedes ponerla en un archivo `.env` (está en `.gitignore`);
+`.env.example` es la plantilla versionada.
+
+## Datos de prueba
+
+Están versionados en `tests/data/` y no contienen datos reales ni secretos:
+
+- `product.ts`: producto de prueba y formato de dinero.
+- `usuarios.ts`: guest, dirección de Argentina (la que el sitio autocompleta) y perfil del registro de TC-002.
+- `trazabilidad.json`: por cada TC, el flujo crítico que protege, su severidad y sus archivos de datos (lo lee el reporte de CI).
+
+El email del registro y la contraseña se generan en cada ejecución, así que no hay nada que cargar a mano.
 
 ## Estructura
 
@@ -69,9 +80,10 @@ tests/
   Critical Cases/   TC-001 a TC-005
   QATES/            TC-006 a TC-008, generados por QATES ([QATES] en el título y etiqueta @qates)
   pages/            Page Objects (CatalogPage, CheckoutPage)
-  data/             datos de prueba (product.ts)
+  data/             datos de prueba versionados (product.ts, usuarios.ts, trazabilidad.json)
   agregar-producto-al-carrito.spec.ts
 specs/              planes de prueba
+scripts/reporte/    generador de reportes BUG-CI desde el JSON de Playwright
 .github/workflows/  typecheck.yml y playwright.yml
 ```
 
@@ -97,10 +109,41 @@ specs/              planes de prueba
 
 ## Integración continua
 
+Nadie tiene que lanzar nada a mano: los workflows corren solos en cada pull request.
+
 - `typecheck.yml`: corre `tsc --noEmit` en cada pull request.
-- `playwright.yml`: corre los tests solo en Firefox, en cada push y pull request hacia `main`, y sube
-  `playwright-report/` y `test-results/`. Toma toda la carpeta `tests/`, así que también corre
-  `tests/QATES/`.
+- `playwright.yml`: corre la suite completa (incluye `tests/QATES/`) solo en Firefox, en cada pull request
+  hacia `main` y en cada push a `main`. También se puede lanzar desde la pestaña Actions
+  (*Run workflow*). Si se sube otro commit al mismo PR, cancela la corrida anterior.
+
+### Bloqueo del merge
+
+El check `Playwright Tests / test` falla si algún test falla. Para que eso impida el merge hay que
+exigirlo en GitHub (lo configura quien administra el repo): *Settings → Branches → regla de protección
+de `main` → Require status checks to pass* y marcar `Playwright Tests / test` y `Type check (tsc)`.
+
+Los tests omitidos por Cloudflare **no** hacen fallar el check: el job queda verde y el PR muestra un
+aviso con la cantidad. Un PR verde con muchos omitidos no ejercitó esas pruebas.
+
+### Reporte de fallos
+
+En CI (variable `CI`) Playwright genera, además del reporte HTML, `test-results/resultados.json`.
+`scripts/reporte/generar-reportes.js` lo lee y, por cada test fallido, escribe un borrador de bug con las
+secciones de `docs/bugs/BUG-001.md` (datos generales, qué pasó, pasos, datos de prueba, origen, impacto y
+evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para completarlo a mano.
+
+- **Nombre:** `BUG-CI-<commit7>-<TC>-<navegador>.md`, por ejemplo `BUG-CI-e4eb637-TC-001-firefox.md`.
+  El commit es el último del PR; el PR, la rama y el enlace a la corrida van en la sección *Origen*.
+- **Severidad y flujo afectado:** salen de `tests/data/trazabilidad.json` (una entrada por TC; hay que
+  añadir la del TC nuevo).
+- **Resumen:** el job muestra totales, fallos con su severidad y flujo, y los omitidos por Cloudflare.
+
+| Artefacto | Contenido |
+| :--- | :--- |
+| `reportes-ci` | borradores `BUG-CI-*.md` (solo si hubo fallos) |
+| `playwright-report` | reporte HTML, trazas y `test-results/` completo |
+
+Local: `CI=1 npx playwright test` y luego `node scripts/reporte/generar-reportes.js`.
 
 ## Cómo se construyeron los tests
 

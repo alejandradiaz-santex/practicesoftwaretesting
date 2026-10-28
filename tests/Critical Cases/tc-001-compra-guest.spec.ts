@@ -3,6 +3,7 @@
 import { test, expect } from '../fixtures';
 import { CatalogPage } from '../pages/catalog.page';
 import { product, money } from '../data/product';
+import { guest, direccion } from '../data/usuarios';
 import { CheckoutPage } from '../pages/checkout.page';
 
 test.describe('Checkout como Guest', () => {
@@ -31,13 +32,13 @@ test.describe('Checkout como Guest', () => {
 
     // 4-7. Pasos 3b a 4a-bis: Sign in como guest hasta Billing Address
     await checkout.proceedToSignIn();
-    await checkout.continueAsGuest({ email: 'guest.qa@example.com', firstName: 'Ana', lastName: 'Prueba' });
+    await checkout.continueAsGuest(guest);
 
     // 8. Paso 4b: direccion (autocompletado de Street/City/State)
     await expect(checkout.lookupHint).toHaveText(
       'Enter country, postal code and house number. We will fill in the rest automatically.'
     );
-    await checkout.fillAddress({ country: 'AR', postalCode: 'C1425', houseNumber: '123' });
+    await checkout.fillAddress(direccion); // viene de usuarios.ts
     await expect(checkout.city).toHaveValue(/.+/);
     await expect(checkout.state).toHaveValue(/.+/);
     await expect(checkout.proceedToPayment).toBeEnabled();

@@ -2,6 +2,7 @@
 // seed: tests/seed.spec.ts
 import { test, expect } from '../fixtures';
 import { randomBytes } from 'crypto';
+import { perfilRegistro as perfil } from '../data/usuarios';
 
 /** Contrasena valida (8+ caracteres, mayusculas, minusculas, numero y simbolo) generada en cada ejecucion. */
 function generatePassword(): string {
@@ -35,33 +36,33 @@ test.describe('Registro de cuenta', () => {
     await expect(page.getByText('Your password must:')).toBeVisible();
 
     // 2. Datos personales
-    await page.getByTestId('first-name').fill('Ana');
-    await page.getByTestId('last-name').fill('Prueba');
-    await page.getByTestId('dob').fill('1990-05-15');
-    await expect(page.getByTestId('first-name')).toHaveValue('Ana');
-    await expect(page.getByTestId('last-name')).toHaveValue('Prueba');
-    await expect(page.getByTestId('dob')).toHaveValue('1990-05-15');
+    await page.getByTestId('first-name').fill(perfil.firstName); // viene de usuarios.ts
+    await page.getByTestId('last-name').fill(perfil.lastName);
+    await page.getByTestId('dob').fill(perfil.dob);
+    await expect(page.getByTestId('first-name')).toHaveValue(perfil.firstName);
+    await expect(page.getByTestId('last-name')).toHaveValue(perfil.lastName);
+    await expect(page.getByTestId('dob')).toHaveValue(perfil.dob);
 
     // 3. Direccion con autocompletado (no se asertan valores aleatorios)
     const lookup = page.waitForResponse(
       (r) => r.url().includes('/postcode-lookup') && r.request().method() === 'GET'
     );
-    await page.getByTestId('country').selectOption('AR');
-    await page.getByTestId('postal_code').fill('C1425');
-    await page.getByTestId('house_number').fill('123');
+    await page.getByTestId('country').selectOption(perfil.country);
+    await page.getByTestId('postal_code').fill(perfil.postalCode);
+    await page.getByTestId('house_number').fill(perfil.houseNumber);
     const lookupResponse = await lookup;
     expect(lookupResponse.status()).toBe(200);
-    expect(lookupResponse.url()).toContain('country=AR');
-    expect(lookupResponse.url()).toContain('postcode=C1425');
-    expect(lookupResponse.url()).toContain('house_number=123');
+    expect(lookupResponse.url()).toContain(`country=${perfil.country}`);
+    expect(lookupResponse.url()).toContain(`postcode=${perfil.postalCode}`);
+    expect(lookupResponse.url()).toContain(`house_number=${perfil.houseNumber}`);
     await expect(page.getByTestId('street')).toHaveValue(/.+/, { timeout: 8000 });
     await expect(page.getByTestId('city')).toHaveValue(/.+/);
     await expect(page.getByTestId('state')).toHaveValue(/.+/);
 
     // 4. Telefono y email unico
-    await page.getByTestId('phone').fill('1155550123');
+    await page.getByTestId('phone').fill(perfil.phone);
     await page.getByTestId('email').fill(email);
-    await expect(page.getByTestId('phone')).toHaveValue('1155550123');
+    await expect(page.getByTestId('phone')).toHaveValue(perfil.phone);
     await expect(page.getByTestId('email')).toHaveValue(email);
 
     // 5. Contrasena desde variable de entorno

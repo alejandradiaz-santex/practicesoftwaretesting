@@ -1,9 +1,23 @@
 name: Playwright Tests
+
+# Corre la suite completa (incluye tests/QATES/) en cada pull request hacia main y en cada push a main,
+# sin intervencion manual. Los datos de prueba estan versionados en tests/data/.
+# Para bloquear el merge: proteger la rama main y exigir el check "Playwright Tests / test".
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+
+# Si se sube otro commit al mismo PR, cancela la corrida anterior.
+concurrency:
+  group: playwright-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   test:
     timeout-minutes: 60
@@ -13,12 +27,22 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+        cache: npm
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps firefox
     - name: Run Playwright tests
       run: npx playwright test --project=firefox
+    # Genera un borrador BUG-CI por cada fallo y el resumen del job. Los tests omitidos por
+    # Cloudflare solo avisan: no hacen fallar el check.
+    - name: Generar reportes
+      if: ${{ !cancelled() }}
+      run: node scripts/reporte/generar-reportes.js
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -26,4 +50,12 @@ jobs:
         path: |
           playwright-report/
           test-results/
+        retention-days: 30
+    # Borradores de bug (formato de docs/bugs/BUG-001.md) en un artefacto aparte.
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: reportes-ci
+        path: test-results/bugs/
+        if-no-files-found: ignore
         retention-days: 30
