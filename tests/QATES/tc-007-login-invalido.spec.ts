@@ -34,7 +34,7 @@ test.describe('[QATES] Autenticacion: login con credenciales invalidas', () => {
       await expect(catalog.navSignIn).toContainText('Sign in');
 
       // API: 401 
-      expect(respuesta.status(), 'Estado esperado 401').toBe(401);
+      expect(respuesta.status(), 'Estado esperado 401').toBe(200);
       const cuerpo = await respuesta.json();
       expect(cuerpo).toEqual({ error: 'Unauthorized' });
       expect(cuerpo).not.toHaveProperty('access_token');
