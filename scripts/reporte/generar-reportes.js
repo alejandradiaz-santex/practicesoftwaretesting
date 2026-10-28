@@ -52,15 +52,41 @@ for (const t of tests) {
   else ok++;
 }
 
+// El JSON da la ruta del spec relativa a testDir (tests/); en el repo hay que anteponerlo.
+const rutaRepo = (archivo) => `tests/${String(archivo).split('\\').join('/')}`;
+// Las rutas de adjuntos son absolutas del runner: se dejan relativas a test-results/.
+const rutaRelativa = (ruta) => {
+  const r = String(ruta).split('\\').join('/');
+  const i = r.indexOf('test-results/');
+  return i >= 0 ? r.slice(i) : r;
+};
+const lineaDelError = (ultimo, spec) => (ultimo.error && ultimo.error.location && ultimo.error.location.line) || spec.line;
+// La capa se deduce del mensaje de error; si no hay pistas claras, queda como dato faltante.
+const deducirCapa = (mensaje) => {
+  if (/Estado esperado|status|respuesta|response|HTTP|\b[45]\d\d\b/i.test(mensaje)) {
+    return 'API (deducida del error: falla una comprobación de la respuesta HTTP)';
+  }
+  if (/locator|getBy|toBeVisible|toHaveText|toHaveURL|toContainText|toHaveValue|toBeEnabled|toBeDisabled/i.test(mensaje)) {
+    return 'UI (deducida del error: falla una comprobación de la página)';
+  }
+  return null;
+};
+// Un dato es "archivo" si parece una ruta con extensión; si no, es texto libre y no se marca como archivo.
+const esArchivo = (d) => /^[\w.-]+(\/[\w.-]+)+\.\w+$/.test(d);
+
 const borrador = ({ spec, test, archivo, ultimo }) => {
   const tc = tcDe(spec.title);
   const nav = test.projectName || 'desconocido';
   const info = traza[tc] || {};
   const nombre = `BUG-CI-${commit7}-${tc || 'TC-XXX'}-${nav}`;
   const error = limpiar((ultimo.error && ultimo.error.message) || (ultimo.errors && ultimo.errors[0] && ultimo.errors[0].message));
+  const ruta = rutaRepo(archivo);
+  const linea = lineaDelError(ultimo, spec);
+  const capa = deducirCapa(error);
+  const datos = info.datos || [falta('sin entrada en trazabilidad.json')];
   const adjuntos = (ultimo.attachments || [])
     .filter((a) => a.path)
-    .map((a) => `- \`${a.name}\`: \`${a.path}\` (en el artefacto \`playwright-report\`)`);
+    .map((a) => `- \`${a.name}\`: \`${rutaRelativa(a.path)}\` (en el artefacto \`playwright-report\`)`);
   const version = (resultados.config && resultados.config.version) || '?';
   const md = [
     `# ${nombre}: ${spec.title}`,
@@ -84,7 +110,7 @@ const borrador = ({ spec, test, archivo, ultimo }) => {
     '',
     '## Pasos para reproducir',
     '',
-    `1. \`npx playwright test "${archivo}" --project=${nav}\``,
+    `1. \`npx playwright test "${ruta}" --project=${nav}\``,
     '',
     `**Resultado esperado**: ${falta('criterio de aceptación del caso')}`,
     '',
@@ -92,15 +118,15 @@ const borrador = ({ spec, test, archivo, ultimo }) => {
     '',
     '## Datos de prueba',
     '',
-    `- **De dónde salen los datos**: ${(info.datos || [falta('sin entrada en trazabilidad.json')]).map((d) => `\`${d}\``).join(', ')} (commit ${commit7})`,
-    '- **Contexto**: corrida automática de CI; los valores exactos están en esos archivos',
+    `- **De dónde salen los datos**: ${datos.map((d) => (esArchivo(d) ? `\`${d}\`` : d)).join(', ')} (commit ${commit7})`,
+    `- **Contexto**: corrida automática de CI${datos.some(esArchivo) ? '; los valores exactos están en esos archivos' : '; los valores se generan o están dentro del propio test'}`,
     '',
     '## Origen',
     '',
     `- **Cómo se encontró**: corrida automática de CI (${pr}, rama \`${rama}\`, commit \`${commit7}\`)`,
     `- **Corrida**: ${corrida}`,
-    `- **Dónde falla**: \`${archivo}:${spec.line}\``,
-    `- **Capa**: ${falta('UI o API')}`,
+    `- **Dónde falla**: \`${ruta}:${linea}\``,
+    `- **Capa**: ${capa || falta('UI o API')}`,
     `- **Desde cuándo**: ${falta('última corrida verde conocida')}`,
     '',
     '## Impacto',
@@ -112,7 +138,7 @@ const borrador = ({ spec, test, archivo, ultimo }) => {
     '',
     '## Evidencia',
     '',
-    `- \`${archivo}:${spec.line}\``,
+    `- \`${ruta}:${linea}\``,
     ...(adjuntos.length ? adjuntos : ['- Sin adjuntos (la traza se guarda solo al reintentar)']),
     '',
   ].join('\n');
@@ -123,7 +149,7 @@ fs.mkdirSync(carpeta, { recursive: true });
 const generados = fallos.map((f) => {
   const b = borrador(f);
   fs.writeFileSync(path.join(carpeta, `${b.nombre}.md`), b.md);
-  console.log(`::error file=${f.archivo},line=${f.spec.line}::${f.spec.title} falló (${f.test.projectName})`);
+  console.log(`::error file=${rutaRepo(f.archivo)},line=${lineaDelError(f.ultimo, f.spec)}::${f.spec.title} falló (${f.test.projectName})`);
   return b.nombre;
 });
 
