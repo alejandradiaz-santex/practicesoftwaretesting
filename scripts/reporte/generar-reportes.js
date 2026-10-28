@@ -105,11 +105,20 @@ const esArchivo = (d) => /^[\w.-]+(\/[\w.-]+)+\.\w+$/.test(d);
 
 const mensajeDe = (r) => limpiar((r.error && r.error.message) || (r.errors && r.errors[0] && r.errors[0].message));
 
+// Dos fallos que den el mismo nombre (p. ej. tests sin TC-### en el título) no deben pisarse.
+const nombresUsados = new Set();
+const nombreUnico = (base) => {
+  let n = base;
+  for (let i = 2; nombresUsados.has(n); i++) n = `${base}-${i}`;
+  nombresUsados.add(n);
+  return n;
+};
+
 const borrador = ({ spec, test, archivo, ultimo, primero }) => {
   const tc = tcDe(spec.title);
   const nav = test.projectName || 'desconocido';
   const info = traza[tc] || {};
-  const nombre = `BUG-CI-${commit7}-${tc || 'TC-XXX'}-${nav}`;
+  const nombre = nombreUnico(`BUG-CI-${commit7}-${tc || 'TC-XXX'}-${nav}`);
   const error = mensajeDe(primero);
   const ruta = rutaRepo(archivo);
   const { archivo: rutaFalla, linea } = ubicacionDelError(primero, spec, archivo);
