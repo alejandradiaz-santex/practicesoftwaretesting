@@ -26,6 +26,8 @@ de TC-001 a TC-005, con los hallazgos de la exploración del sitio, en [specs/ch
 
 - [Node.js](https://nodejs.org) LTS (incluye `npm`). Si la terminal dice que `npm` no se reconoce,
   instálalo y abre una terminal nueva.
+- Los comandos de este README funcionan igual en Windows, Mac y Linux, salvo donde se indique una
+  versión para PowerShell.
 
 ## Instalación
 
@@ -35,6 +37,15 @@ npm ci
 
 ```bash
 npx playwright install
+```
+
+Esto instala los tres navegadores (Chromium, Firefox y WebKit). Hoy el CI solo corre **Firefox**, pero
+con todos instalados no tendrás que repetir este paso si se suma otro.
+
+Si prefieres ahorrar espacio y solo vas a correr Firefox, instala únicamente ese:
+
+```bash
+npx playwright install firefox
 ```
 
 ## Cómo ejecutar los tests
@@ -83,6 +94,7 @@ tests/
   data/             datos de prueba versionados (product.ts, usuarios.ts, trazabilidad.json)
   agregar-producto-al-carrito.spec.ts
 specs/              planes de prueba
+docs/               guías y reportes de bugs
 scripts/reporte/    generador de reportes BUG-CI desde el JSON de Playwright
 .github/workflows/  typecheck.yml y playwright.yml
 ```
@@ -144,6 +156,12 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
 | `playwright-report` | reporte HTML, trazas y `test-results/` completo |
 
 Local: `CI=1 npx playwright test` y luego `node scripts/reporte/generar-reportes.js`.
+
+### Probar el proceso de bugs
+
+¿Es la primera vez que lo usas? Sigue la [guía paso a paso](docs/guia-reportes-bugs.md): explica qué
+hace el sistema solo, cómo provocar un fallo de prueba sin tocar el sitio, cómo leer el borrador de bug
+y qué hacer con él. No hace falta instalar nada: se hace desde el navegador.
 
 ## Cómo se construyeron los tests
 
