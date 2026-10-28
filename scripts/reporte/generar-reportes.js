@@ -46,7 +46,9 @@ const otrosOmitidos = [];
 let ok = 0;
 for (const t of tests) {
   const ultimo = t.test.results[t.test.results.length - 1] || {};
-  if (t.test.status === 'unexpected') fallos.push({ ...t, ultimo });
+  // El primer fallo suele ser la causa; los reintentos pueden fallar por otra cosa (p. ej. el sitio lento).
+  const primero = t.test.results.find((r) => r.status === 'failed' || r.status === 'timedOut') || ultimo;
+  if (t.test.status === 'unexpected') fallos.push({ ...t, ultimo, primero });
   else if (t.test.status === 'skipped' && (t.test.annotations || []).some((a) => a.type === 'cloudflare')) omitidosCloudflare.push(t);
   else if (t.test.status === 'skipped') otrosOmitidos.push(t);
   else ok++;
@@ -74,14 +76,20 @@ const deducirCapa = (mensaje) => {
 // Un dato es "archivo" si parece una ruta con extensión; si no, es texto libre y no se marca como archivo.
 const esArchivo = (d) => /^[\w.-]+(\/[\w.-]+)+\.\w+$/.test(d);
 
-const borrador = ({ spec, test, archivo, ultimo }) => {
+const mensajeDe = (r) => limpiar((r.error && r.error.message) || (r.errors && r.errors[0] && r.errors[0].message));
+
+const borrador = ({ spec, test, archivo, ultimo, primero }) => {
   const tc = tcDe(spec.title);
   const nav = test.projectName || 'desconocido';
   const info = traza[tc] || {};
   const nombre = `BUG-CI-${commit7}-${tc || 'TC-XXX'}-${nav}`;
-  const error = limpiar((ultimo.error && ultimo.error.message) || (ultimo.errors && ultimo.errors[0] && ultimo.errors[0].message));
+  const error = mensajeDe(primero);
   const ruta = rutaRepo(archivo);
-  const linea = lineaDelError(ultimo, spec);
+  const linea = lineaDelError(primero, spec);
+  // Si los intentos fallaron distinto, se listan todos para no ocultar la causa real.
+  const resumenIntento = (r) => `${mensajeDe(r).split('\n')[0] || 'sin mensaje'} (línea ${lineaDelError(r, spec)})`;
+  const intentos = test.results.map((r, i) => `${i + 1}. ${r.status}: ${resumenIntento(r)}`);
+  const difieren = new Set(test.results.map(resumenIntento)).size > 1;
   const capa = deducirCapa(error);
   const datos = info.datos || [falta('sin entrada en trazabilidad.json')];
   const adjuntos = (ultimo.attachments || [])
@@ -108,6 +116,9 @@ const borrador = ({ spec, test, archivo, ultimo }) => {
     error || falta('sin mensaje de error'),
     '```',
     '',
+    ...(test.results.length > 1
+      ? [`Es el error del primer fallo. Intentos de esta corrida${difieren ? ' (**no fallaron igual**)' : ''}:`, '', ...intentos, '']
+      : []),
     '## Pasos para reproducir',
     '',
     `1. \`npx playwright test "${ruta}" --project=${nav}\``,
@@ -149,7 +160,7 @@ fs.mkdirSync(carpeta, { recursive: true });
 const generados = fallos.map((f) => {
   const b = borrador(f);
   fs.writeFileSync(path.join(carpeta, `${b.nombre}.md`), b.md);
-  console.log(`::error file=${rutaRepo(f.archivo)},line=${lineaDelError(f.ultimo, f.spec)}::${f.spec.title} falló (${f.test.projectName})`);
+  console.log(`::error file=${rutaRepo(f.archivo)},line=${lineaDelError(f.primero, f.spec)}::${f.spec.title} falló (${f.test.projectName})`);
   return b.nombre;
 });
 
