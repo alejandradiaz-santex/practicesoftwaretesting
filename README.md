@@ -97,6 +97,7 @@ tests/
 specs/              planes de prueba
 docs/               guías y reportes de bugs
 scripts/reporte/    generador de reportes BUG-CI desde el JSON de Playwright
+scripts/metricas/   métricas del proyecto (ver la cabecera de cada script)
 .github/workflows/  typecheck.yml y playwright.yml
 ```
 
@@ -131,9 +132,13 @@ Nadie tiene que lanzar nada a mano: los workflows corren solos en cada pull requ
 
 ### Bloqueo del merge
 
-El check `Playwright Tests / test` falla si algún test falla. Para que eso impida el merge hay que
-exigirlo en GitHub (lo configura quien administra el repo): *Settings → Branches → regla de protección
-de `main` → Require status checks to pass* y marcar `Playwright Tests / test` y `Type check (tsc)`.
+La rama `main` está protegida así (se cambia en *Settings → Branches*, y lo hace quien administra el repo):
+
+- Todo cambio entra por pull request, con **1 aprobación** de otra persona.
+- Deben pasar los checks `Playwright Tests / test` y `Type check (tsc)`, y la rama debe estar al día con `main`.
+- La regla se aplica también a administradores.
+
+El check `test` falla si algún test falla.
 
 Los tests omitidos por Cloudflare **no** hacen fallar el check mientras sean la mitad o menos: el job queda
 verde y el PR muestra un aviso con la cantidad. Si **más del 50%** de los tests queda omitido, la suite casi
@@ -151,7 +156,15 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
   El commit es el último del PR; el PR, la rama y el enlace a la corrida van en la sección *Origen*.
 - **Severidad y flujo afectado:** salen de `tests/data/trazabilidad.json` (una entrada por TC; hay que
   añadir la del TC nuevo).
-- **Resumen:** el job muestra totales, fallos con su severidad y flujo, y los omitidos por Cloudflare.
+- **Resumen:** el job muestra una tabla con los tests que pasaron, los **inestables**, los que fallaron y los
+  omitidos por Cloudflare, más la lista de fallos con su severidad y flujo afectado. Si más del 50% quedó
+  omitido, el título cambia a "Suite no ejercitada" y el check falla.
+- **Inestables:** un test que falla y pasa al reintentar (con `retries: 2` en CI) aparece en su propia
+  sección con el error del primer fallo. No bloquea el merge ni genera borrador, porque el test pasó.
+- **Qué error cuenta el borrador:** el del **primer** fallo, y lista todos los intentos para que se vea si no
+  fallaron igual. La línea y el archivo son donde se lanzó el error, que puede ser un page object.
+- **Tests sin `TC-###` en el título** (como `agregar-producto-al-carrito`) salen como `TC-XXX`, con severidad y
+  flujo en `[FALTA DATO]`. Si hay varios, el nombre lleva un sufijo (`-2`, `-3`) para que no se pisen.
 
 | Artefacto | Contenido |
 | :--- | :--- |
@@ -162,6 +175,13 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
 ejecución conserva sus propias evidencias y el relanzamiento no choca con los artefactos de la anterior.
 
 Local: `CI=1 npx playwright test` y luego `node scripts/reporte/generar-reportes.js`.
+
+En PowerShell (Windows):
+
+```powershell
+$env:CI=1; npx.cmd playwright test
+node scripts/reporte/generar-reportes.js
+```
 
 ### Probar el proceso de bugs
 
