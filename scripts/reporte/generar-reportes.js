@@ -2,7 +2,9 @@
 //  - un borrador de bug por test fallido: test-results/bugs/BUG-CI-<commit7>-<TC>-<navegador>.md
 //    (secciones de docs/bugs/BUG-001.md; lo que no se sabe queda como [FALTA DATO: ...])
 //  - un resumen en el job (GITHUB_STEP_SUMMARY) y un aviso por los tests omitidos por Cloudflare.
-// Siempre termina en 0: el que hace fallar el check es el paso de tests. Sin dependencias.
+// Termina en 0, salvo si Cloudflare dejó sin ejercitar más de MAX_OMITIDOS_PCT (50 por defecto) de los
+// tests: ahí el check falla a propósito, porque un PR verde con casi todo omitido no probó nada.
+// En los demás casos el que hace fallar el check es el paso de tests. Sin dependencias.
 const fs = require('fs');
 const path = require('path');
 
@@ -210,6 +212,17 @@ if (omitidosCloudflare.length) {
   console.log(`::warning::${omitidosCloudflare.length} test(s) omitidos por la verificación de Cloudflare: la suite no los ejercitó.`);
 }
 
+// Por encima del umbral, el check falla: relanzar la corrida es la salida.
+const maxOmitidosPct = Number(env.MAX_OMITIDOS_PCT || 50);
+const pctOmitidos = tests.length ? (omitidosCloudflare.length * 100) / tests.length : 0;
+const excedido = pctOmitidos > maxOmitidosPct;
+if (excedido) {
+  console.log(
+    `::error::${omitidosCloudflare.length} de ${tests.length} tests (${Math.round(pctOmitidos)}%) quedaron omitidos por Cloudflare: la suite no se ejercitó. Relanza la corrida.`
+  );
+  process.exitCode = 1;
+}
+
 if (inestables.length) {
   console.log(
     `::warning::${inestables.length} test(s) inestables: fallaron y pasaron al reintentar (${inestables.map((i) => tcDe(i.spec.title) || i.spec.title).join(', ')}).`
@@ -235,7 +248,14 @@ if (fallos.length) {
   resumen.push('', 'Los borradores están en el artefacto `reportes-ci`. Prioridad, causa y workaround quedan como `[FALTA DATO]`.', '');
 }
 if (omitidosCloudflare.length) {
-  resumen.push('### ⚠️ Omitidos por Cloudflare (no bloquean el merge)', '', ...omitidosCloudflare.map((o) => `- ${o.spec.title}`), '');
+  resumen.push(
+    excedido
+      ? `### ❌ Suite no ejercitada: más del ${maxOmitidosPct}% omitido por Cloudflare (el check falla; relanza la corrida)`
+      : `### ⚠️ Omitidos por Cloudflare (no bloquean el merge mientras no superen el ${maxOmitidosPct}%)`,
+    '',
+    ...omitidosCloudflare.map((o) => `- ${o.spec.title}`),
+    ''
+  );
 }
 if (inestables.length) {
   resumen.push(

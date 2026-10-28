@@ -150,7 +150,8 @@ El sitio de pruebas es compartido y a veces no carga, y entonces fallan tests qu
 2. Si ahora pasa: fue el sitio. No hay bug que reportar.
 3. Si falla **igual y con el mismo mensaje**: trátalo como bug real.
 4. Un test **omitido** no cuenta como fallo: Cloudflare, una protección del sitio, bloqueó la prueba. Ese
-   test no se ejecutó, así que no te dice nada del sitio.
+   test no se ejecutó, así que no te dice nada del sitio. Solo si **más de la mitad** de los tests queda
+   omitido, el check falla a propósito: relanza la corrida.
 
 ## Qué hacer con un borrador de bug real
 
@@ -175,8 +176,9 @@ Sirve para repetir una corrida sobre una rama. El borrador solo se genera si alg
 - **Falló algo que no tocaste:** ver *¿Es un bug de verdad o un fallo del sitio?*.
 - **El botón de merge dice que falta una aprobación:** es normal; el repo exige que otra persona apruebe
   cada PR.
-- **Aparecen muchos tests omitidos:** Cloudflare está bloqueando a GitHub. Avisa al equipo: el check verde
-  cubre menos de lo que parece.
+- **Aparecen muchos tests omitidos:** Cloudflare está bloqueando a GitHub. Si son más de la mitad, el check
+  falla y debes relanzar la corrida. Si son menos, el check queda verde pero cubre menos de lo que parece:
+  avisa al equipo.
 
 ## Opción avanzada: en tu computadora
 
