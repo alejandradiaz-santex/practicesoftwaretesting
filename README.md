@@ -135,8 +135,10 @@ El check `Playwright Tests / test` falla si algún test falla. Para que eso impi
 exigirlo en GitHub (lo configura quien administra el repo): *Settings → Branches → regla de protección
 de `main` → Require status checks to pass* y marcar `Playwright Tests / test` y `Type check (tsc)`.
 
-Los tests omitidos por Cloudflare **no** hacen fallar el check: el job queda verde y el PR muestra un
-aviso con la cantidad. Un PR verde con muchos omitidos no ejercitó esas pruebas.
+Los tests omitidos por Cloudflare **no** hacen fallar el check mientras sean la mitad o menos: el job queda
+verde y el PR muestra un aviso con la cantidad. Si **más del 50%** de los tests queda omitido, la suite casi
+no se ejercitó y el check falla a propósito: relanza la corrida (*Re-run failed jobs*). El porcentaje se
+cambia añadiendo `MAX_OMITIDOS_PCT` al `env` del paso "Generar reportes" en `playwright.yml`.
 
 ### Reporte de fallos
 
@@ -153,8 +155,11 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
 
 | Artefacto | Contenido |
 | :--- | :--- |
-| `reportes-ci` | borradores `BUG-CI-*.md` (solo si hubo fallos) |
-| `playwright-report` | reporte HTML, trazas y `test-results/` completo |
+| `reportes-ci-<n>` | borradores `BUG-CI-*.md` (solo si hubo fallos) |
+| `playwright-report-<n>` | reporte HTML, trazas y `test-results/` completo |
+
+`<n>` es el número de ejecución: `1` la primera vez y `2` si relanzas la corrida (*Re-run*). Así cada
+ejecución conserva sus propias evidencias y el relanzamiento no choca con los artefactos de la anterior.
 
 Local: `CI=1 npx playwright test` y luego `node scripts/reporte/generar-reportes.js`.
 

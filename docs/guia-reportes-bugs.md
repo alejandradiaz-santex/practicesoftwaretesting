@@ -74,7 +74,8 @@ Los chequeos tardan entre 2 y 6 minutos. Los verás en la parte baja del PR.
 ### 5. Descarga el borrador del bug
 
 1. En esa misma página, baja hasta **Artifacts**.
-2. Descarga **`reportes-ci`** (es un `.zip`) y ábrelo.
+2. Descarga **`reportes-ci-1`** (es un `.zip`) y ábrelo. El número final es el de la ejecución: `1` la
+   primera vez, `2` si relanzas la corrida.
 3. Dentro hay un archivo como `BUG-CI-1a2b3c4-TC-008-firefox.md`. Ábrelo con el Bloc de notas o cualquier
    editor de texto.
 
@@ -140,7 +141,7 @@ Es el error del primer fallo. Intentos de esta corrida:
 | Datos de prueba | De qué archivo salen los datos | **El sistema** |
 | Origen | PR, rama, commit, enlace a la corrida, archivo y línea | **El sistema**. *Desde cuándo* lo completa una persona |
 | Impacto | Flujo afectado | **El sistema**. *A quién afecta* y *workaround* los completa una persona |
-| Evidencia | Línea del fallo y archivos de apoyo | **El sistema**. La traza y capturas están en el artefacto `playwright-report` |
+| Evidencia | Línea del fallo y archivos de apoyo | **El sistema**. La traza y capturas están en el artefacto `playwright-report-<n>` |
 
 ## ¿Es un bug de verdad o un fallo del sitio?
 
@@ -150,14 +151,15 @@ El sitio de pruebas es compartido y a veces no carga, y entonces fallan tests qu
 2. Si ahora pasa: fue el sitio. No hay bug que reportar.
 3. Si falla **igual y con el mismo mensaje**: trátalo como bug real.
 4. Un test **omitido** no cuenta como fallo: Cloudflare, una protección del sitio, bloqueó la prueba. Ese
-   test no se ejecutó, así que no te dice nada del sitio.
+   test no se ejecutó, así que no te dice nada del sitio. Solo si **más de la mitad** de los tests queda
+   omitido, el check falla a propósito: relanza la corrida.
 
 ## Qué hacer con un borrador de bug real
 
 1. Completa los `[FALTA DATO: ...]` que sepas. Los que no puedas, déjalos marcados.
 2. **Crea el ticket a mano en el Jira de tu equipo** y pega las secciones del borrador (título, qué pasó,
    pasos, datos de prueba, origen, impacto y evidencia). Adjunta la traza del artefacto
-   `playwright-report` si la necesitas.
+   `playwright-report-<n>` si la necesitas.
 3. Anota en el ticket el enlace a la corrida que aparece en *Origen*.
 
 ## Lanzar los tests sin abrir un PR
@@ -170,13 +172,15 @@ Sirve para repetir una corrida sobre una rama. El borrador solo se genera si alg
 
 ## Si algo sale distinto
 
-- **No ves el artefacto `reportes-ci`:** solo aparece si hubo al menos un fallo, y dura 30 días.
+- **No ves el artefacto `reportes-ci-<n>`:** solo aparece si hubo al menos un fallo, y dura 30 días. Si
+  relanzaste la corrida y la segunda vez pasó, el borrador está en `reportes-ci-1`, el de la primera.
 - **No te deja descargar el artefacto:** hace falta haber iniciado sesión en GitHub con acceso al repo.
 - **Falló algo que no tocaste:** ver *¿Es un bug de verdad o un fallo del sitio?*.
 - **El botón de merge dice que falta una aprobación:** es normal; el repo exige que otra persona apruebe
   cada PR.
-- **Aparecen muchos tests omitidos:** Cloudflare está bloqueando a GitHub. Avisa al equipo: el check verde
-  cubre menos de lo que parece.
+- **Aparecen muchos tests omitidos:** Cloudflare está bloqueando a GitHub. Si son más de la mitad, el check
+  falla y debes relanzar la corrida. Si son menos, el check queda verde pero cubre menos de lo que parece:
+  avisa al equipo.
 
 ## Opción avanzada: en tu computadora
 

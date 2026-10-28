@@ -46,7 +46,9 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
+        # El sufijo es el número de ejecución (1, y 2 si se relanza): con upload-artifact@v4 un nombre
+        # repetido dentro de la misma corrida da error, y así se conservan las evidencias de cada intento.
+        name: playwright-report-${{ github.run_attempt }}
         path: |
           playwright-report/
           test-results/
@@ -55,7 +57,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: reportes-ci
+        name: reportes-ci-${{ github.run_attempt }}
         path: test-results/bugs/
         if-no-files-found: ignore
         retention-days: 30
