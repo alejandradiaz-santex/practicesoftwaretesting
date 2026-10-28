@@ -155,8 +155,11 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
 
 | Artefacto | Contenido |
 | :--- | :--- |
-| `reportes-ci` | borradores `BUG-CI-*.md` (solo si hubo fallos) |
-| `playwright-report` | reporte HTML, trazas y `test-results/` completo |
+| `reportes-ci-<n>` | borradores `BUG-CI-*.md` (solo si hubo fallos) |
+| `playwright-report-<n>` | reporte HTML, trazas y `test-results/` completo |
+
+`<n>` es el número de ejecución: `1` la primera vez y `2` si relanzas la corrida (*Re-run*). Así cada
+ejecución conserva sus propias evidencias y el relanzamiento no choca con los artefactos de la anterior.
 
 Local: `CI=1 npx playwright test` y luego `node scripts/reporte/generar-reportes.js`.
 

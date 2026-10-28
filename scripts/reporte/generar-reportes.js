@@ -33,6 +33,10 @@ const traza = leerJson(path.join(__dirname, '../../tests/data/trazabilidad.json'
 
 const commit = env.PR_HEAD_SHA || env.GITHUB_SHA || 'local';
 const commit7 = commit.slice(0, 7);
+// Los artefactos llevan el número de ejecución (1, y 2 si se relanza la corrida); ver playwright.yml.
+const sufijoEjecucion = env.GITHUB_RUN_ATTEMPT ? `-${env.GITHUB_RUN_ATTEMPT}` : '';
+const artefactoReporte = `playwright-report${sufijoEjecucion}`;
+const artefactoBorradores = `reportes-ci${sufijoEjecucion}`;
 const corrida =
   env.GITHUB_SERVER_URL && env.GITHUB_RUN_ID
     ? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`
@@ -136,7 +140,7 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
   const adjuntos = test.results.flatMap((r, i) =>
     (r.attachments || [])
       .filter((a) => a.path)
-      .map((a) => `- \`${a.name}\` (intento ${i + 1}): \`${rutaRelativa(a.path)}\` (en el artefacto \`playwright-report\`)`)
+      .map((a) => `- \`${a.name}\` (intento ${i + 1}): \`${rutaRelativa(a.path)}\` (en el artefacto \`${artefactoReporte}\`)`)
   );
   const version = (resultados.config && resultados.config.version) || '?';
   const md = [
@@ -245,7 +249,7 @@ if (fallos.length) {
     const info = traza[tcDe(f.spec.title)] || {};
     resumen.push(`| ${f.spec.title} | ${f.test.projectName} | ${info.severidad || '?'} | ${info.flujo || '?'} | \`${generados[i]}.md\` |`);
   });
-  resumen.push('', 'Los borradores están en el artefacto `reportes-ci`. Prioridad, causa y workaround quedan como `[FALTA DATO]`.', '');
+  resumen.push('', `Los borradores están en el artefacto \`${artefactoBorradores}\`. Prioridad, causa y workaround quedan como \`[FALTA DATO]\`.`, '');
 }
 if (omitidosCloudflare.length) {
   resumen.push(
