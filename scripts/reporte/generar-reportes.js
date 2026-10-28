@@ -15,8 +15,19 @@ if (!fs.existsSync(entrada)) {
   process.exit(0);
 }
 
-const resultados = JSON.parse(fs.readFileSync(entrada, 'utf8'));
-const traza = JSON.parse(fs.readFileSync(path.join(__dirname, '../../tests/data/trazabilidad.json'), 'utf8'));
+// Un JSON vacío o roto no debe dejar rojo el job: se avisa y se sale (el que decide es el paso de tests).
+const leerJson = (ruta, porDefecto) => {
+  try {
+    return JSON.parse(fs.readFileSync(ruta, 'utf8'));
+  } catch (e) {
+    console.log(`::warning::No se pudo leer ${path.basename(ruta)} (${e.message}).`);
+    return porDefecto;
+  }
+};
+const resultados = leerJson(entrada, null);
+if (!resultados) process.exit(0);
+// Si la trazabilidad está rota, los borradores salen igual con severidad y flujo como [FALTA DATO].
+const traza = leerJson(path.join(__dirname, '../../tests/data/trazabilidad.json'), {});
 
 const commit = env.PR_HEAD_SHA || env.GITHUB_SHA || 'local';
 const commit7 = commit.slice(0, 7);
