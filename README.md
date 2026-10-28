@@ -80,6 +80,7 @@ Están versionados en `tests/data/` y no contienen datos reales ni secretos:
 
 - `product.ts`: producto de prueba y formato de dinero.
 - `usuarios.ts`: guest, dirección de Argentina (la que el sitio autocompleta) y perfil del registro de TC-002.
+- `busqueda.ts`: término de búsqueda y categoría de TC-004.
 - `trazabilidad.json`: por cada TC, el flujo crítico que protege, su severidad y sus archivos de datos (lo lee el reporte de CI).
 
 El email del registro y la contraseña se generan en cada ejecución, así que no hay nada que cargar a mano.
@@ -91,7 +92,7 @@ tests/
   Critical Cases/   TC-001 a TC-005
   QATES/            TC-006 a TC-008, generados por QATES ([QATES] en el título y etiqueta @qates)
   pages/            Page Objects (CatalogPage, CheckoutPage)
-  data/             datos de prueba versionados (product.ts, usuarios.ts, trazabilidad.json)
+  data/             datos de prueba versionados (product.ts, usuarios.ts, busqueda.ts, trazabilidad.json)
   agregar-producto-al-carrito.spec.ts
 specs/              planes de prueba
 docs/               guías y reportes de bugs

@@ -2,6 +2,7 @@
 // seed: tests/seed.spec.ts
 import { test, expect } from '../fixtures';
 import { CatalogPage } from '../pages/catalog.page';
+import { busqueda } from '../data/busqueda';
 
 test.describe('Búsqueda y filtros', () => {
   test('TC-004: Búsqueda por Producto o filtrando por Categoría', async ({ page }) => {
@@ -16,19 +17,19 @@ test.describe('Búsqueda y filtros', () => {
     await expect(catalog.searchCaption).toHaveCount(0); // Searched for: label
 
     // 2. Paso 1: buscar "hammer"
-    const searchResponse = await catalog.search('hammer');
+    const searchResponse = await catalog.search(busqueda.termino);
     expect(searchResponse.status()).toBe(200);
     // Verifica lo que tiene el Payload
-    expect(searchResponse.request().postData()).toContain('"q":"hammer"');
+    expect(searchResponse.request().postData()).toContain(`"q":"${busqueda.termino}"`);
     // Verifica que la busqueda me traiga resultados
     const searchBody = await searchResponse.json();
     expect(searchBody.data.length).toBeGreaterThan(0);
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/');
-    await expect(catalog.searchCaption).toHaveText('Searched for: hammer');
+    await expect(catalog.searchCaption).toHaveText(`Searched for: ${busqueda.termino}`);
     await expect(catalog.productCards.first()).toBeVisible();
     expect(await catalog.productCards.count()).toBeGreaterThanOrEqual(1);
     // Ningun producto listado carece de "hammer" en el nombre
-    await expect(catalog.productNames.filter({ hasNotText: /hammer/i })).toHaveCount(0);
+    await expect(catalog.productNames.filter({ hasNotText: new RegExp(busqueda.termino, 'i') })).toHaveCount(0);
 
     // 3. Paso 2: buscar "xyzzy" (sin resultados)
     await catalog.search('xyzzy');
@@ -46,8 +47,8 @@ test.describe('Búsqueda y filtros', () => {
     await expect(catalog.productCards).toHaveCount(9);
 
     // 5. Paso 3b: filtrar por la categoria Hammer
-    const categoryResponse = await catalog.filterByCategory('Hammer');
-    const hammerCheckbox = catalog.categoryCheckbox('Hammer');
+    const categoryResponse = await catalog.filterByCategory(busqueda.categoria);
+    const hammerCheckbox = catalog.categoryCheckbox(busqueda.categoria);
     const categoryId = await hammerCheckbox.getAttribute('value');//toma el ID de la categoria
     expect(categoryResponse.status()).toBe(200);
     //Valida que el payload tiene by_category: con el ID de la categoria seleccionada
@@ -64,7 +65,7 @@ test.describe('Búsqueda y filtros', () => {
     // Los nombres mostrados coinciden con los de la respuesta del servidor. No se exige "hammer" en el
     // nombre: el sitio puede tener productos con otros nombres en la categoria (ej. "topo").
     await expect(catalog.productNames).toHaveText(categoryBody.data.map((p: { name: string }) => p.name));
-    await expect(page.getByText('Sledgehammer')).toBeVisible();
+    await expect(page.getByText(busqueda.productoDeLaCategoria)).toBeVisible();
     await expect(page).toHaveURL('https://practicesoftwaretesting.com/');
   });
 });
