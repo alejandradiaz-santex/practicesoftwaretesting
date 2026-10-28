@@ -2,9 +2,9 @@
   "TC-001": { "flujo": "1 · Compra como invitado (checkout completo)", "severidad": "Crítica", "datos": ["tests/data/product.ts", "tests/data/usuarios.ts"] },
   "TC-002": { "flujo": "2 · Registro de usuario, camino feliz", "severidad": "Alta", "datos": ["tests/data/usuarios.ts"] },
   "TC-003": { "flujo": "3 · Carrito: cantidades y totales", "severidad": "Alta", "datos": ["tests/data/product.ts"] },
-  "TC-004": { "flujo": "4 · Búsqueda y filtro por categoría", "severidad": "Media", "datos": ["Datos dentro del spec (categoría Hammer)"] },
+  "TC-004": { "flujo": "4 · Búsqueda y filtro por categoría", "severidad": "Media", "datos": ["tests/data/busqueda.ts"] },
   "TC-005": { "flujo": "5 · Checkout con datos inválidos", "severidad": "Alta", "datos": ["tests/data/product.ts", "tests/data/usuarios.ts"] },
-  "TC-006": { "flujo": "6 · Orden del catálogo por precio", "severidad": "Media", "datos": ["Datos dentro del spec"] },
+  "TC-006": { "flujo": "6 · Orden del catálogo por precio", "severidad": "Media", "datos": ["Sin datos fijos: usa las opciones de orden del sitio (price,asc y price,desc)"] },
   "TC-007": { "flujo": "7 · Login con credenciales inválidas", "severidad": "Media", "datos": ["Datos efímeros generados en el spec"] },
-  "TC-008": { "flujo": "8 · Detalle de producto (tarjeta, ficha y API coherentes)", "severidad": "Media", "datos": ["Datos dentro del spec"] }
+  "TC-008": { "flujo": "8 · Detalle de producto (tarjeta, ficha y API coherentes)", "severidad": "Media", "datos": ["Sin datos fijos: lee el nombre y el precio de la primera tarjeta del catálogo"] }
 }
