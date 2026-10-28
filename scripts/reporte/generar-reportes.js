@@ -43,6 +43,7 @@ const tcDe = (titulo) => (titulo.match(/TC-\d{3}/) || [''])[0];
 const fallos = [];
 const omitidosCloudflare = [];
 const otrosOmitidos = [];
+const inestables = [];
 let ok = 0;
 for (const t of tests) {
   const ultimo = t.test.results[t.test.results.length - 1] || {};
@@ -51,6 +52,8 @@ for (const t of tests) {
   if (t.test.status === 'unexpected') fallos.push({ ...t, ultimo, primero });
   else if (t.test.status === 'skipped' && (t.test.annotations || []).some((a) => a.type === 'cloudflare')) omitidosCloudflare.push(t);
   else if (t.test.status === 'skipped') otrosOmitidos.push(t);
+  // Fallaron y pasaron al reintentar: no bloquean, pero se hacen visibles.
+  else if (t.test.status === 'flaky') inestables.push({ ...t, primero });
   else ok++;
 }
 
@@ -168,12 +171,18 @@ if (omitidosCloudflare.length) {
   console.log(`::warning::${omitidosCloudflare.length} test(s) omitidos por la verificación de Cloudflare: la suite no los ejercitó.`);
 }
 
+if (inestables.length) {
+  console.log(
+    `::warning::${inestables.length} test(s) inestables: fallaron y pasaron al reintentar (${inestables.map((i) => tcDe(i.spec.title) || i.spec.title).join(', ')}).`
+  );
+}
+
 const resumen = [
   '## Reporte de pruebas',
   '',
-  '| Pasaron | Fallaron | Omitidos (Cloudflare) | Omitidos (otros) |',
-  '| ---: | ---: | ---: | ---: |',
-  `| ${ok} | ${fallos.length} | ${omitidosCloudflare.length} | ${otrosOmitidos.length} |`,
+  '| Pasaron | Inestables | Fallaron | Omitidos (Cloudflare) | Omitidos (otros) |',
+  '| ---: | ---: | ---: | ---: | ---: |',
+  `| ${ok} | ${inestables.length} | ${fallos.length} | ${omitidosCloudflare.length} | ${otrosOmitidos.length} |`,
   '',
   `Origen: ${pr}, rama \`${rama}\`, commit \`${commit7}\`. Corrida: ${corrida}`,
   '',
@@ -188,6 +197,18 @@ if (fallos.length) {
 }
 if (omitidosCloudflare.length) {
   resumen.push('### ⚠️ Omitidos por Cloudflare (no bloquean el merge)', '', ...omitidosCloudflare.map((o) => `- ${o.spec.title}`), '');
+}
+if (inestables.length) {
+  resumen.push(
+    '### ⚠️ Inestables (pasaron al reintentar, no bloquean el merge)',
+    '',
+    '| Test | Navegador | Intentos | Error del primer fallo |',
+    '| :--- | :--- | ---: | :--- |',
+    ...inestables.map(
+      (i) => `| ${i.spec.title} | ${i.test.projectName} | ${i.test.results.length} | ${mensajeDe(i.primero).split('\n')[0] || 'sin mensaje'} |`
+    ),
+    ''
+  );
 }
 const texto = resumen.join('\n');
 if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(env.GITHUB_STEP_SUMMARY, texto);
