@@ -92,11 +92,13 @@ const ubicacionDelError = (r, spec, archivoSpec) => {
 };
 // La capa se deduce del mensaje de error; si no hay pistas claras, queda como dato faltante.
 const deducirCapa = (mensaje) => {
-  if (/Estado esperado|status|respuesta|response|HTTP|\b[45]\d\d\b/i.test(mensaje)) {
-    return 'API (deducida del error: falla una comprobación de la respuesta HTTP)';
-  }
-  if (/locator|getBy|toBeVisible|toHaveText|toHaveURL|toContainText|toHaveValue|toBeEnabled|toBeDisabled/i.test(mensaje)) {
+  // La UI se evalúa primero: sus mensajes (Locator:, toHaveURL...) son inequívocos.
+  if (/Locator:|getBy|toBeVisible|toHaveText|toHaveURL|toContainText|toHaveValue|toBeEnabled|toBeDisabled|toHaveCount/.test(mensaje)) {
     return 'UI (deducida del error: falla una comprobación de la página)';
+  }
+  // La API solo con pistas específicas: ni "HTTP" (coincide con https://) ni números sueltos (precios, columnas).
+  if (/Estado esperado|\bstatus(Code)?\b|toBeOK|respuesta|Received: [1-5]\d\d\b/i.test(mensaje)) {
+    return 'API (deducida del error: falla una comprobación de la respuesta HTTP)';
   }
   return null;
 };
