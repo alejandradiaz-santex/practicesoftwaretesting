@@ -76,7 +76,20 @@ const rutaRelativa = (ruta) => {
   const i = r.indexOf('test-results/');
   return i >= 0 ? r.slice(i) : r;
 };
-const lineaDelError = (ultimo, spec) => (ultimo.error && ultimo.error.location && ultimo.error.location.line) || spec.line;
+// Dónde se lanzó el error: puede ser un page object y no el spec. El JSON da el archivo absoluto del
+// runner; si no está dentro del repo (o no viene), se usa el spec con la línea donde empieza el test.
+const ubicacionDelError = (r, spec, archivoSpec) => {
+  const loc = r.error && r.error.location;
+  if (loc && loc.file && loc.line) {
+    const abs = String(loc.file).split('\\').join('/');
+    const rel = path.relative(process.cwd(), loc.file).split('\\').join('/');
+    if (rel && !rel.startsWith('..') && !path.isAbsolute(rel)) return { archivo: rel, linea: loc.line };
+    // El script corre en otra carpeta que el runner (p. ej. con el JSON descargado): se corta en tests/.
+    const i = abs.lastIndexOf('/tests/');
+    if (i >= 0) return { archivo: abs.slice(i + 1), linea: loc.line };
+  }
+  return { archivo: rutaRepo(archivoSpec), linea: spec.line };
+};
 // La capa se deduce del mensaje de error; si no hay pistas claras, queda como dato faltante.
 const deducirCapa = (mensaje) => {
   if (/Estado esperado|status|respuesta|response|HTTP|\b[45]\d\d\b/i.test(mensaje)) {
@@ -99,9 +112,9 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
   const nombre = `BUG-CI-${commit7}-${tc || 'TC-XXX'}-${nav}`;
   const error = mensajeDe(primero);
   const ruta = rutaRepo(archivo);
-  const linea = lineaDelError(primero, spec);
+  const { archivo: rutaFalla, linea } = ubicacionDelError(primero, spec, archivo);
   // Si los intentos fallaron distinto, se listan todos para no ocultar la causa real.
-  const resumenIntento = (r) => `${mensajeDe(r).split('\n')[0] || 'sin mensaje'} (línea ${lineaDelError(r, spec)})`;
+  const resumenIntento = (r) => `${mensajeDe(r).split('\n')[0] || 'sin mensaje'} (línea ${ubicacionDelError(r, spec, archivo).linea})`;
   const intentos = test.results.map((r, i) => `${i + 1}. ${r.status}: ${resumenIntento(r)}`);
   const difieren = new Set(test.results.map(resumenIntento)).size > 1;
   const capa = deducirCapa(error);
@@ -150,7 +163,7 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
     '',
     `- **Cómo se encontró**: corrida automática de CI (${pr}, rama \`${rama}\`, commit \`${commit7}\`)`,
     `- **Corrida**: ${corrida}`,
-    `- **Dónde falla**: \`${ruta}:${linea}\``,
+    `- **Dónde falla**: \`${rutaFalla}:${linea}\``,
     `- **Capa**: ${capa || falta('UI o API')}`,
     `- **Desde cuándo**: ${falta('última corrida verde conocida')}`,
     '',
@@ -163,7 +176,7 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
     '',
     '## Evidencia',
     '',
-    `- \`${ruta}:${linea}\``,
+    `- \`${rutaFalla}:${linea}\``,
     ...(adjuntos.length ? adjuntos : ['- Sin adjuntos (la traza se guarda solo al reintentar)']),
     '',
   ].join('\n');
@@ -174,7 +187,8 @@ fs.mkdirSync(carpeta, { recursive: true });
 const generados = fallos.map((f) => {
   const b = borrador(f);
   fs.writeFileSync(path.join(carpeta, `${b.nombre}.md`), b.md);
-  console.log(`::error file=${rutaRepo(f.archivo)},line=${lineaDelError(f.primero, f.spec)}::${f.spec.title} falló (${f.test.projectName})`);
+  const u = ubicacionDelError(f.primero, f.spec, f.archivo);
+  console.log(`::error file=${u.archivo},line=${u.linea}::${f.spec.title} falló (${f.test.projectName})`);
   return b.nombre;
 });
 
