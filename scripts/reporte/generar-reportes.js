@@ -119,9 +119,12 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
   const difieren = new Set(test.results.map(resumenIntento)).size > 1;
   const capa = deducirCapa(error);
   const datos = info.datos || [falta('sin entrada en trazabilidad.json')];
-  const adjuntos = (ultimo.attachments || [])
-    .filter((a) => a.path)
-    .map((a) => `- \`${a.name}\`: \`${rutaRelativa(a.path)}\` (en el artefacto \`playwright-report\`)`);
+  // Adjuntos de todos los intentos: la traza solo se graba en el primer reintento (trace: on-first-retry).
+  const adjuntos = test.results.flatMap((r, i) =>
+    (r.attachments || [])
+      .filter((a) => a.path)
+      .map((a) => `- \`${a.name}\` (intento ${i + 1}): \`${rutaRelativa(a.path)}\` (en el artefacto \`playwright-report\`)`)
+  );
   const version = (resultados.config && resultados.config.version) || '?';
   const md = [
     `# ${nombre}: ${spec.title}`,
