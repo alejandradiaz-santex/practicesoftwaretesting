@@ -1,10 +1,98 @@
 {
-  "TC-001": { "flujo": "1 · Compra como invitado (checkout completo)", "severidad": "Crítica", "datos": ["tests/data/product.ts", "tests/data/usuarios.ts"] },
-  "TC-002": { "flujo": "2 · Registro de usuario, camino feliz", "severidad": "Alta", "datos": ["tests/data/usuarios.ts"] },
-  "TC-003": { "flujo": "3 · Carrito: cantidades y totales", "severidad": "Alta", "datos": ["tests/data/product.ts"] },
-  "TC-004": { "flujo": "4 · Búsqueda y filtro por categoría", "severidad": "Media", "datos": ["tests/data/busqueda.ts"] },
-  "TC-005": { "flujo": "5 · Checkout con datos inválidos", "severidad": "Alta", "datos": ["tests/data/product.ts", "tests/data/usuarios.ts"] },
-  "TC-006": { "flujo": "6 · Orden del catálogo por precio", "severidad": "Media", "datos": ["Sin datos fijos: usa las opciones de orden del sitio (price,asc y price,desc)"] },
-  "TC-007": { "flujo": "7 · Login con credenciales inválidas", "severidad": "Media", "datos": ["Datos efímeros generados en el spec"] },
-  "TC-008": { "flujo": "8 · Detalle de producto (tarjeta, ficha y API coherentes)", "severidad": "Media", "datos": ["Sin datos fijos: lee el nombre y el precio de la primera tarjeta del catálogo"] }
+  "TC-001": {
+    "titulo": "[Compra] Un visitante sin cuenta no puede completar la compra como invitado",
+    "flujo": "1 · Compra como invitado (checkout completo)",
+    "severidad": "Crítica",
+    "datos": ["tests/data/product.ts", "tests/data/usuarios.ts"],
+    "precondiciones": "sin sesión iniciada y producto con stock",
+    "esperado": "mensaje de pago exitoso, orden con número de factura y carrito vacío; la API de facturas para guest responde 201 con `invoice_number`",
+    "usuario": "visitante sin cuenta (guest) / sin rol",
+    "valores": "datos de contacto y dirección del guest (AR, C1425, 123) y el producto Bolt Cutters (48,41 USD)",
+    "registros": "crea una orden y su factura en el sitio demo",
+    "afecta": "visitantes sin cuenta que quieren comprar como invitados"
+  },
+  "TC-002": {
+    "titulo": "[Registro] Un visitante no puede crear su cuenta con datos válidos",
+    "flujo": "2 · Registro de usuario, camino feliz",
+    "severidad": "Alta",
+    "datos": ["tests/data/usuarios.ts"],
+    "precondiciones": "sin sesión iniciada y email que no esté registrado",
+    "esperado": "el registro se completa sin errores y el sitio redirige a la pantalla de login",
+    "usuario": "visitante sin sesión que se registra / sin rol",
+    "valores": "nombre y apellido, fecha de nacimiento, dirección (AR, C1425, 123) y teléfono fijos; email único y contraseña generados en cada ejecución",
+    "registros": "crea una cuenta de usuario en el sitio demo",
+    "afecta": "visitantes que quieren crear una cuenta"
+  },
+  "TC-003": {
+    "titulo": "[Carrito] Las cantidades, el subtotal o el total del carrito no se calculan como se espera",
+    "flujo": "3 · Carrito: cantidades y totales",
+    "severidad": "Alta",
+    "datos": ["tests/data/product.ts"],
+    "precondiciones": "sin sesión iniciada y carrito vacío",
+    "esperado": "precio igual al del catálogo; subtotal y total correctos al cambiar la cantidad (1: 48,41; 2: 96,82); cantidades 0 y -1 no aceptadas; el carrito se mantiene con el mismo contenido y total",
+    "usuario": "visitante sin sesión / sin rol",
+    "valores": "el producto Bolt Cutters (48,41 USD) y las cantidades 1, 2, 0 y -1",
+    "registros": "ninguno: no crea pedidos ni cuentas",
+    "afecta": "visitantes que usan el carrito"
+  },
+  "TC-004": {
+    "titulo": "[Catálogo] La búsqueda o el filtro por categoría no muestran los productos esperados",
+    "flujo": "4 · Búsqueda y filtro por categoría",
+    "severidad": "Media",
+    "datos": ["tests/data/busqueda.ts"],
+    "precondiciones": "catálogo disponible, sin filtros aplicados",
+    "esperado": "los resultados corresponden al término buscado; sin resultados se muestra un mensaje claro; con una categoría solo se listan productos de esa categoría",
+    "usuario": "visitante sin sesión / sin rol",
+    "valores": "búsquedas \"hammer\" y \"xyzzy\" (sin resultados) y la categoría Hand Tools > Hammer",
+    "registros": "ninguno: no crea pedidos ni cuentas",
+    "afecta": "visitantes que buscan o filtran productos"
+  },
+  "TC-005": {
+    "titulo": "[Compra] El pago con datos inválidos no se rechaza como se espera",
+    "flujo": "5 · Checkout con datos inválidos",
+    "severidad": "Alta",
+    "datos": ["tests/data/product.ts", "tests/data/usuarios.ts"],
+    "precondiciones": "usuario guest (sin sesión iniciada) con un producto con stock en el carrito",
+    "esperado": "los campos obligatorios vacíos bloquean el avance; con un código postal inválido el sitio no muestra error y permite avanzar (posible defecto); credit-card con campos vacíos no confirma el pago: el servidor responde 422 con un error por campo, pero la interfaz solo muestra \"Unknown error\" (posible defecto)",
+    "usuario": "visitante sin cuenta (guest) / sin rol",
+    "valores": "dirección con campos vacíos, código postal inválido (ZZZZ) y los métodos de pago credit-card y bank-transfer con campos vacíos",
+    "registros": "ninguno: no se crea ninguna orden con datos inválidos",
+    "afecta": "visitantes sin cuenta que pagan con datos incorrectos"
+  },
+  "TC-006": {
+    "titulo": "[Catálogo] Los productos no aparecen en el orden correcto al ordenar por precio",
+    "flujo": "6 · Orden del catálogo por precio",
+    "severidad": "Media",
+    "datos": ["Sin datos fijos: usa las opciones de orden del sitio (price,asc y price,desc)"],
+    "precondiciones": "sin sesión iniciada y catálogo sin búsqueda ni filtros",
+    "esperado": "los precios quedan de menor a mayor y de mayor a menor, sin ningún par fuera de orden, con la misma cantidad de tarjetas en ambos órdenes",
+    "usuario": "visitante sin sesión / sin rol",
+    "valores": "ninguno que se escriba; se eligen las opciones \"Price (Low - High)\" y \"Price (High - Low)\"",
+    "registros": "ninguno: no crea pedidos ni cuentas",
+    "afecta": "visitantes que ordenan el catálogo por precio"
+  },
+  "TC-007": {
+    "titulo": "[Acceso] El inicio de sesión con credenciales inválidas no se rechaza como se espera",
+    "flujo": "7 · Login con credenciales inválidas",
+    "severidad": "Media",
+    "datos": ["Datos efímeros generados en el spec"],
+    "precondiciones": "sin sesión iniciada, en `/auth/login`",
+    "esperado": "no se inicia sesión, la interfaz muestra \"Invalid email or password\" sin decir cuál dato falló, y la API responde 401 sin devolver token",
+    "usuario": "visitante sin sesión que intenta iniciar sesión / sin rol",
+    "valores": "un email con formato válido pero no registrado y una contraseña ficticia, ambos generados en cada ejecución",
+    "registros": "ninguno: es un intento fallido, no crea cuenta ni sesión",
+    "afecta": "usuarios que intentan iniciar sesión"
+  },
+  "TC-008": {
+    "titulo": "[Detalle de producto] El nombre o el precio de un producto no coinciden entre la tarjeta del catálogo, su ficha y el servidor",
+    "flujo": "8 · Detalle de producto (tarjeta, ficha y API coherentes)",
+    "severidad": "Media",
+    "datos": ["Sin datos fijos: lee el nombre y el precio de la primera tarjeta del catálogo"],
+    "precondiciones": "catálogo accesible, sin sesión, sin filtros ni búsqueda y con al menos una tarjeta visible",
+    "esperado": "el nombre y el precio de la ficha son iguales a los de la tarjeta, y la API responde 200 con el mismo nombre y el mismo precio",
+    "usuario": "visitante sin sesión / sin rol",
+    "valores": "ninguno (solo lectura)",
+    "registros": "ninguno: no crea pedidos ni cuentas",
+    "afecta": "visitantes que consultan el detalle de un producto"
+  }
 }

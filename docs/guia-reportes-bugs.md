@@ -86,19 +86,21 @@ Los chequeos tardan entre 2 y 6 minutos. Los verás en la parte baja del PR.
 
 ## Cómo leer el borrador
 
-El nombre dice: `BUG-CI-` + **commit** (qué versión del código falló) + **TC** (qué test) + **navegador**.
-Ejemplo de un borrador real, resumido (los valores de *Ambiente* y *Origen* son un ejemplo de lo que
-verías en CI):
+El nombre dice: `BUG-CI-` + **commit** (qué versión de las pruebas detectó el fallo) + **TC** (qué test) +
+**navegador**. Ejemplo de un borrador, resumido (los valores de *Origen* son un ejemplo de lo que verías en CI):
 
 ```markdown
-# BUG-CI-861d573-TC-008-firefox: TC-008: tarjeta, ficha y API muestran el mismo nombre y precio
+# BUG-CI-9def2b3-TC-008-firefox: TC-008: tarjeta, ficha y API muestran el mismo nombre y precio
 
 ## Datos generales
+- **Título**: [Detalle de producto] El nombre o el precio de un producto no coinciden entre la tarjeta del catálogo, su ficha y el servidor
 - **Severidad**: Media
 - **Prioridad**: [FALTA DATO: la define el PO]
 - **Ambiente**: CI (GitHub Actions) — https://practicesoftwaretesting.com
+- **Versión**: v2.5, build 2026-10-11 (pie de página)
 - **Navegador / dispositivo**: firefox (Playwright 1.64.1) en Linux
 - **Ticket relacionado**: TC-008
+- **Reportado con**: CI automático (borrador, requiere revisión)
 
 ## Qué pasó
 Error: expect(locator).toHaveText(expected) failed
@@ -111,37 +113,61 @@ Es el error del primer fallo. Intentos de esta corrida:
 3. failed: expect(locator).toHaveText(expected) failed (línea 24)
 
 ## Pasos para reproducir
+**Precondiciones**: catálogo accesible, sin sesión, sin filtros ni búsqueda y con al menos una tarjeta visible
+
 1. `npx playwright test "tests/QATES/tc-008-tarjeta-ficha-api.spec.ts" --project=firefox`
-**Resultado esperado**: [FALTA DATO: criterio de aceptación del caso]
+
+**Resultado esperado**: el nombre y el precio de la ficha son iguales a los de la tarjeta, y la API responde 200 con el mismo nombre y el mismo precio, según `casos-automatizacion.md` (TC-008)
+**Resultado obtenido**: expect(locator).toHaveText(expected) failed · Expected: "texto que no existe" · Received: " Combination Pliers "
+**Frecuencia**: falló 3 de 3 intento(s) en esta corrida; en las últimas 10 corridas de `main`, 9 salieron verdes
 
 ## Datos de prueba
-- **De dónde salen los datos**: Datos dentro del spec (commit 861d573)
+- **Usuario y rol**: visitante sin sesión / sin rol
+- **Valores ingresados**: ninguno (solo lectura)
+- **Registros**: ninguno: no crea pedidos ni cuentas
+- **De dónde salen los datos**: Sin datos fijos: lee el nombre y el precio de la primera tarjeta del catálogo (commit 9def2b3)
+- **Contexto**: corrida automática de CI; los valores se generan o están dentro del propio test
 
 ## Origen
-- **Cómo se encontró**: corrida automática de CI (PR 17, rama `mi-rama`, commit `861d573`)
-- **Corrida**: https://github.com/<organización>/<repositorio>/actions/runs/<número>
+- **Cómo se encontró**: corrida automática de CI (PR 25, rama `mi-rama`, commit `9def2b3`)
 - **Dónde falla**: `tests/QATES/tc-008-tarjeta-ficha-api.spec.ts:24`
 - **Capa**: UI (deducida del error: falla una comprobación de la página)
-- **Desde cuándo**: [FALTA DATO: última corrida verde conocida]
+- **Desde cuándo**: sin dato propio de este test. La última corrida verde de `main` es del commit `bac8aa3` (2026-10-28 22:19 UTC) (dato de la suite completa)
 
 ## Impacto
 - **Qué flujo afecta**: 8 · Detalle de producto (tarjeta, ficha y API coherentes)
-- **A quién afecta**: [FALTA DATO: usuarios afectados]
-- **¿Funcionaba antes?**: [FALTA DATO: comparar con la última corrida verde]
+- **A quién afecta**: visitantes que consultan el detalle de un producto
+- **Cuántos**: N/A: sitio demo, sin usuarios reales ni métricas de uso
+- **Alternativa (workaround)**: [FALTA DATO: si existe]
+- **¿Funcionaba antes?**: probablemente sí: la última corrida verde de `main` (`bac8aa3`) pasó la suite completa. No confirma este test en concreto
 
 ## Evidencia
 - `tests/QATES/tc-008-tarjeta-ficha-api.spec.ts:24`
+- `screenshot` (intento 1): `test-results/.../test-failed-1.png` (en el artefacto `playwright-report-1`)
+- `trace` (intento 2): `test-results/.../trace.zip` (en el artefacto `playwright-report-1`)
 ```
 
-| Sección | Qué dice | Quién la completa |
+**Qué se rellena solo y qué no.** El sistema rellena casi todo. Solo quedan para una persona la
+**Prioridad** (la define el PO) y la **Alternativa (workaround)**. Dos reglas para leerlo bien:
+
+- **Un dato que el sistema no puede obtener queda como `[FALTA DATO: ...]`, nunca inventado.** Por ejemplo,
+  la *Versión* sale del pie de página del sitio y, si la página que se vio era la de Cloudflare, no se puede
+  leer.
+- **El historial es de la suite completa, no de este test.** Una corrida verde no prueba que ese test
+  concreto pasó (pudo omitirse), y el borrador lo dice.
+
+| Sección | De dónde sale | Quién la completa |
 | :--- | :--- | :--- |
-| Datos generales | Severidad, navegador y test afectado | **El sistema**. Solo la *Prioridad* la define el PO |
+| Datos generales | Título, severidad y ticket por TC (`trazabilidad.json`); versión del pie de página; navegador | **El sistema**. Solo la *Prioridad* la define el PO |
 | Qué pasó | El mensaje de error real y cada intento | **El sistema** |
-| Pasos para reproducir | Comando exacto para repetirlo | **El sistema**. El *resultado esperado* lo escribe una persona |
-| Datos de prueba | De qué archivo salen los datos | **El sistema** |
-| Origen | PR, rama, commit, enlace a la corrida, archivo y línea | **El sistema**. *Desde cuándo* lo completa una persona |
-| Impacto | Flujo afectado | **El sistema**. *A quién afecta* y *workaround* los completa una persona |
-| Evidencia | Línea del fallo y archivos de apoyo | **El sistema**. La traza y capturas están en el artefacto `playwright-report-<n>` |
+| Pasos para reproducir | Comando exacto, precondiciones y resultado esperado por TC; resultado obtenido y frecuencia | **El sistema** |
+| Datos de prueba | Usuario, valores y registros por TC; de qué archivo salen los datos | **El sistema** |
+| Origen | PR, rama, commit, archivo y línea; última corrida verde de `main` | **El sistema** |
+| Impacto | Flujo y a quién afecta por TC; cuántos (N/A en el sitio demo) | **El sistema**. El *workaround* lo completa una persona |
+| Evidencia | Línea del fallo, captura, traza y `error-context` | **El sistema**. Los archivos están en el artefacto `playwright-report-<n>` |
+
+Un test **sin `TC-###`** en el título no tiene esos textos por TC: casi todos los campos saldrán como
+`[FALTA DATO]`.
 
 ## ¿Es un bug de verdad o un fallo del sitio?
 

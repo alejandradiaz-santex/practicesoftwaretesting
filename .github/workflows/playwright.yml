@@ -17,6 +17,8 @@ concurrency:
 
 permissions:
   contents: read
+  # Para que el reporte consulte las corridas anteriores de main ("Desde cuándo", "Frecuencia").
+  actions: read
 
 jobs:
   test:
@@ -43,6 +45,8 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        # La CLI `gh` (ya instalada en el runner) usa este token para leer el historial de corridas.
+        GH_TOKEN: ${{ github.token }}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
