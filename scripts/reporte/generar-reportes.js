@@ -7,6 +7,7 @@
 // En los demás casos el que hace fallar el check es el paso de tests. Sin dependencias.
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 const entrada = process.argv[2] || 'test-results/resultados.json';
 const carpeta = process.argv[3] || 'test-results/bugs';
@@ -111,6 +112,56 @@ const deducirCapa = (mensaje) => {
 // Un dato es "archivo" si parece una ruta con extensión; si no, es texto libre y no se marca como archivo.
 const esArchivo = (d) => /^[\w.-]+(\/[\w.-]+)+\.\w+$/.test(d);
 
+// Historial de corridas de `main`, desde la API de GitHub (con la CLI `gh`, que usa GH_TOKEN). Se consulta una
+// sola vez y solo si hay fallos. Si no hay `gh`, token o red, devuelve null y los campos quedan en [FALTA DATO].
+// Son datos de la suite completa: una corrida verde no prueba que un test concreto pasara (pudo omitirse).
+let historiaCache;
+const historia = () => {
+  if (historiaCache !== undefined) return historiaCache;
+  historiaCache = null;
+  if (!env.GITHUB_REPOSITORY) return historiaCache;
+  const r = spawnSync('gh', ['api', `repos/${env.GITHUB_REPOSITORY}/actions/workflows/playwright.yml/runs?branch=main&per_page=10`], {
+    encoding: 'utf8',
+    timeout: 15000,
+  });
+  if (r.status !== 0 || !r.stdout) {
+    console.log('::warning::No se pudo consultar el historial de corridas de main; esos campos quedan como [FALTA DATO].');
+    return historiaCache;
+  }
+  try {
+    const corridas = (JSON.parse(r.stdout).workflow_runs || []).filter((c) => c.status === 'completed' && String(c.id) !== String(env.GITHUB_RUN_ID));
+    const verde = corridas.find((c) => c.conclusion === 'success');
+    historiaCache = {
+      total: corridas.length,
+      verdes: corridas.filter((c) => c.conclusion === 'success').length,
+      ultimaVerde: verde ? { commit: verde.head_sha.slice(0, 7), fecha: verde.created_at.replace('T', ' ').slice(0, 16) + ' UTC' } : null,
+    };
+  } catch (e) {
+    console.log(`::warning::No se pudo leer el historial de corridas (${e.message}).`);
+  }
+  return historiaCache;
+};
+
+// Versión del sitio probado: está en el pie de página y queda en el error-context.md de cada intento
+// ("v2.5 | Built 2026-10-11 | ..."). Si no se puede leer (p. ej. la página era la de Cloudflare), no se inventa.
+const leerVersion = (results) => {
+  for (const r of results) {
+    for (const a of r.attachments || []) {
+      if (a.name !== 'error-context' || !a.path || !fs.existsSync(a.path)) continue;
+      const m = fs.readFileSync(a.path, 'utf8').match(/\bv(\d+\.\d+(?:\.\d+)?)\s*\|\s*Built\s*(\d{4}-\d{2}-\d{2})/);
+      if (m) return `v${m[1]}, build ${m[2]} (pie de página)`;
+    }
+  }
+  return null;
+};
+
+// "Resultado obtenido": la línea del error y, si las trae, las de Locator / Expected / Received.
+const resumenObtenido = (mensaje) => {
+  const lineas = mensaje.split('\n').map((l) => l.trim()).filter(Boolean);
+  const clave = lineas.filter((l, i) => i === 0 || /^(Locator|Expected|Received):/.test(l));
+  return clave.join(' · ');
+};
+
 const mensajeDe = (r) => limpiar((r.error && r.error.message) || (r.errors && r.errors[0] && r.errors[0].message));
 
 // Dos fallos que den el mismo nombre (p. ej. tests sin TC-### en el título) no deben pisarse.
@@ -143,14 +194,23 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
       .map((a) => `- \`${a.name}\` (intento ${i + 1}): \`${rutaRelativa(a.path)}\` (en el artefacto \`${artefactoReporte}\`)`)
   );
   const version = (resultados.config && resultados.config.version) || '?';
+  const sinEntrada = falta('TC sin entrada en tests/data/trazabilidad.json');
+  const hist = historia();
+  const fallidos = test.results.filter((r) => ['failed', 'timedOut', 'interrupted'].includes(r.status)).length;
+  const frecuencia =
+    `falló ${fallidos} de ${test.results.length} intento(s) en esta corrida; ` +
+    (hist && hist.total ? `en las últimas ${hist.total} corridas de \`main\`, ${hist.verdes} salieron verdes` : falta('histórico de corridas'));
+  const verde = hist && hist.ultimaVerde;
   const md = [
     `# ${nombre}: ${spec.title}`,
     '',
     '## Datos generales',
     '',
-    `- **Severidad**: ${info.severidad || falta('TC sin entrada en tests/data/trazabilidad.json')}`,
+    `- **Título**: ${info.titulo || falta('título no técnico del error; este test no tiene uno en tests/data/trazabilidad.json')}`,
+    `- **Severidad**: ${info.severidad || sinEntrada}`,
     `- **Prioridad**: ${falta('la define el PO')}`,
     '- **Ambiente**: CI (GitHub Actions) — https://practicesoftwaretesting.com',
+    `- **Versión**: ${leerVersion(test.results) || falta('versión del sitio: no se pudo leer del pie de página')}`,
     `- **Navegador / dispositivo**: ${nav} (Playwright ${version}) en ${env.RUNNER_OS || 'local'}`,
     `- **Ticket relacionado**: ${tc || falta('el título no contiene un TC-###')}`,
     '- **Reportado con**: CI automático (borrador, requiere revisión)',
@@ -168,31 +228,38 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
       : []),
     '## Pasos para reproducir',
     '',
+    `**Precondiciones**: ${info.precondiciones || falta('precondiciones del caso')}`,
+    '',
     `1. \`npx playwright test "${ruta}" --project=${nav}\``,
     '',
-    `**Resultado esperado**: ${falta('criterio de aceptación del caso')}`,
+    `**Resultado esperado**: ${info.esperado ? `${info.esperado}, según \`casos-automatizacion.md\` (${tc})` : falta('criterio de aceptación del caso')}`,
     '',
-    `**Frecuencia**: ${test.results.length} intento(s) en esta corrida; ${falta('histórico')}`,
+    `**Resultado obtenido**: ${resumenObtenido(error) || falta('sin mensaje de error')}`,
+    '',
+    `**Frecuencia**: ${frecuencia}`,
     '',
     '## Datos de prueba',
     '',
+    `- **Usuario y rol**: ${info.usuario || sinEntrada}`,
+    `- **Valores ingresados**: ${info.valores || sinEntrada}`,
+    `- **Registros**: ${info.registros || sinEntrada}`,
     `- **De dónde salen los datos**: ${datos.map((d) => (esArchivo(d) ? `\`${d}\`` : d)).join(', ')} (commit ${commit7})`,
     `- **Contexto**: corrida automática de CI${datos.some(esArchivo) ? '; los valores exactos están en esos archivos' : '; los valores se generan o están dentro del propio test'}`,
     '',
     '## Origen',
     '',
     `- **Cómo se encontró**: corrida automática de CI (${pr}, rama \`${rama}\`, commit \`${commit7}\`)`,
-    `- **Corrida**: ${corrida}`,
     `- **Dónde falla**: \`${rutaFalla}:${linea}\``,
     `- **Capa**: ${capa || falta('UI o API')}`,
-    `- **Desde cuándo**: ${falta('última corrida verde conocida')}`,
+    `- **Desde cuándo**: ${verde ? `sin dato propio de este test. La última corrida verde de \`main\` es del commit \`${verde.commit}\` (${verde.fecha}) (dato de la suite completa)` : falta('última corrida verde conocida')}`,
     '',
     '## Impacto',
     '',
     `- **Qué flujo afecta**: ${info.flujo || falta('flujo crítico')}`,
-    `- **A quién afecta**: ${falta('usuarios afectados')}`,
+    `- **A quién afecta**: ${info.afecta || sinEntrada}`,
+    '- **Cuántos**: N/A: sitio demo, sin usuarios reales ni métricas de uso',
     `- **Alternativa (workaround)**: ${falta('si existe')}`,
-    `- **¿Funcionaba antes?**: ${falta('comparar con la última corrida verde')}`,
+    `- **¿Funcionaba antes?**: ${verde ? `probablemente sí: la última corrida verde de \`main\` (\`${verde.commit}\`) pasó la suite completa. No confirma este test en concreto` : falta('comparar con la última corrida verde')}`,
     '',
     '## Evidencia',
     '',

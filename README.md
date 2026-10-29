@@ -81,7 +81,7 @@ Están versionados en `tests/data/` y no contienen datos reales ni secretos:
 - `product.ts`: producto de prueba y formato de dinero.
 - `usuarios.ts`: guest, dirección de Argentina (la que el sitio autocompleta) y perfil del registro de TC-002.
 - `busqueda.ts`: término de búsqueda y categoría de TC-004.
-- `trazabilidad.json`: por cada TC, el flujo crítico que protege, su severidad y sus archivos de datos (lo lee el reporte de CI).
+- `trazabilidad.json`: por cada TC, su título no técnico, el flujo crítico que protege, su severidad, sus archivos de datos y los textos del template de bug (precondiciones, esperado, usuario, valores, registros, a quién afecta). Lo lee el reporte de CI.
 
 El email del registro y la contraseña se generan en cada ejecución, así que no hay nada que cargar a mano.
 
@@ -154,8 +154,15 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
 
 - **Nombre:** `BUG-CI-<commit7>-<TC>-<navegador>.md`, por ejemplo `BUG-CI-e4eb637-TC-001-firefox.md`.
   El commit es el último del PR; el PR, la rama y el enlace a la corrida van en la sección *Origen*.
-- **Severidad y flujo afectado:** salen de `tests/data/trazabilidad.json` (una entrada por TC; hay que
-  añadir la del TC nuevo).
+- **Textos por TC:** título no técnico, severidad, flujo afectado, precondiciones, resultado esperado,
+  usuario, valores, registros y a quién afecta salen de `tests/data/trazabilidad.json` (una entrada por TC;
+  hay que añadir la del TC nuevo).
+- **Campos que se rellenan solos:** además de lo anterior, la *Versión* se lee del pie de página del sitio
+  (queda en el `error-context` de cada intento), y *Desde cuándo*, *¿Funcionaba antes?* y *Frecuencia*
+  salen del historial de corridas de `main` (el workflow tiene el permiso `actions: read` para eso).
+- **Nunca se inventa un dato:** si no se puede obtener (la página era la de Cloudflare, no hay historial...),
+  el campo queda como `[FALTA DATO]`. El historial es de la suite completa, no de un test. Solo la
+  *Prioridad* (la define el PO) y la *Alternativa (workaround)* dependen siempre de una persona.
 - **Resumen:** el job muestra una tabla con los tests que pasaron, los **inestables**, los que fallaron y los
   omitidos por Cloudflare, más la lista de fallos con su severidad y flujo afectado. Si más del 50% quedó
   omitido, el título cambia a "Suite no ejercitada" y el check falla.
