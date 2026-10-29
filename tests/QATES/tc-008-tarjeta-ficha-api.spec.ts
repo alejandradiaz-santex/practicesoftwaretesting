@@ -21,7 +21,7 @@ test.describe('[QATES] Producto: tarjeta, ficha y API coinciden', () => {
       // 2. Abrir la tarjeta y leer nombre y precio de la ficha (el precio viene sin "$")
       await tarjeta.click();
       await expect(page).toHaveURL(/\/product\/[^/]+$/);
-      await expect(catalog.productName).toHaveText(nombreTarjeta);
+      await expect(catalog.productName).toHaveText('texto que no existe');
       await expect(catalog.unitPrice).toBeVisible();
       const nombreFicha = (await catalog.productName.innerText()).trim();
       const precioFicha = Number((await catalog.unitPrice.innerText()).trim());
