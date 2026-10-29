@@ -161,7 +161,8 @@ evidencia). Lo que el CI no puede saber queda como `[FALTA DATO: ...]` para comp
   usuario, valores, registros y a quién afecta salen de `tests/data/trazabilidad.json` (una entrada por TC;
   hay que añadir la del TC nuevo).
 - **Campos que se rellenan solos:** además de lo anterior, la *Versión* se lee del pie de página del sitio
-  (queda en el `error-context` de cada intento), y *Desde cuándo*, *¿Funcionaba antes?* y *Frecuencia*
+  (`tests/fixtures.ts` la guarda al fallar un test, leída de la página viva; si no está, se busca en el
+  `error-context` de cada intento), y *Desde cuándo*, *¿Funcionaba antes?* y *Frecuencia*
   salen del historial de corridas de `main` (el workflow tiene el permiso `actions: read` para eso).
 - **Nunca se inventa un dato:** si no se puede obtener (la página era la de Cloudflare, no hay historial...),
   el campo queda como `[FALTA DATO]`. El historial es de la suite completa, no de un test. Solo la

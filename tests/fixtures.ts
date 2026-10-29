@@ -25,6 +25,18 @@ async function hayVerificacionCloudflare(page: Page): Promise<boolean> {
 export const test = base.extend({
   page: async ({ page }, use, testInfo) => {
     await use(page);
+    // Versión del sitio, leída del pie de la página viva cuando el test falla: el reporte de CI la usa y así
+    // no depende de que el snapshot del error la incluya. Sin pie visible (p. ej. la página de Cloudflare)
+    // no se añade nada y el reporte la deja como [FALTA DATO].
+    if (testInfo.status !== testInfo.expectedStatus && !page.isClosed()) {
+      try {
+        const pie = await page.getByRole('contentinfo').innerText({ timeout: 2000 });
+        const version = pie.match(/v\d+\.\d+(?:\.\d+)?\s*\|\s*Built\s*\d{4}-\d{2}-\d{2}/);
+        if (version) testInfo.annotations.push({ type: 'version-sitio', description: version[0] });
+      } catch {
+        /* sin pie de página: no se inventa la versión */
+      }
+    }
     if (testInfo.status !== testInfo.expectedStatus && (await hayVerificacionCloudflare(page))) {
       testInfo.annotations.push({
         type: 'cloudflare',

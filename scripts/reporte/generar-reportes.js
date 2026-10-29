@@ -142,13 +142,18 @@ const historia = () => {
   return historiaCache;
 };
 
-// Versión del sitio probado: está en el pie de página y queda en el error-context.md de cada intento
-// ("v2.5 | Built 2026-10-11 | ..."). Si no se puede leer (p. ej. la página era la de Cloudflare), no se inventa.
-const leerVersion = (results) => {
+// Versión del sitio probado ("v2.5 | Built 2026-10-11 | ..." en el pie de página). Primero la anotación
+// `version-sitio` que tests/fixtures.ts guarda al fallar, leída de la página viva; si no está, el
+// error-context.md de cada intento. Si no se puede leer (p. ej. la página era la de Cloudflare), no se inventa.
+const patronVersion = /\bv(\d+\.\d+(?:\.\d+)?)\s*\|\s*Built\s*(\d{4}-\d{2}-\d{2})/;
+const leerVersion = (results, anotaciones = []) => {
+  const anotada = anotaciones.find((a) => a.type === 'version-sitio');
+  const mAnotada = anotada && String(anotada.description || '').match(patronVersion);
+  if (mAnotada) return `v${mAnotada[1]}, build ${mAnotada[2]} (pie de página)`;
   for (const r of results) {
     for (const a of r.attachments || []) {
       if (a.name !== 'error-context' || !a.path || !fs.existsSync(a.path)) continue;
-      const m = fs.readFileSync(a.path, 'utf8').match(/\bv(\d+\.\d+(?:\.\d+)?)\s*\|\s*Built\s*(\d{4}-\d{2}-\d{2})/);
+      const m = fs.readFileSync(a.path, 'utf8').match(patronVersion);
       if (m) return `v${m[1]}, build ${m[2]} (pie de página)`;
     }
   }
@@ -210,7 +215,7 @@ const borrador = ({ spec, test, archivo, ultimo, primero }) => {
     `- **Severidad**: ${info.severidad || sinEntrada}`,
     `- **Prioridad**: ${falta('la define el PO')}`,
     '- **Ambiente**: CI (GitHub Actions) — https://practicesoftwaretesting.com',
-    `- **Versión**: ${leerVersion(test.results) || falta('versión del sitio: no se pudo leer del pie de página')}`,
+    `- **Versión**: ${leerVersion(test.results, test.annotations) || falta('versión del sitio: no se pudo leer del pie de página')}`,
     `- **Navegador / dispositivo**: ${nav} (Playwright ${version}) en ${env.RUNNER_OS || 'local'}`,
     `- **Ticket relacionado**: ${tc || falta('el título no contiene un TC-###')}`,
     '- **Reportado con**: CI automático (borrador, requiere revisión)',
