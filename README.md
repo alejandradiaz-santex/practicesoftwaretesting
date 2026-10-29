@@ -106,6 +106,9 @@ scripts/metricas/   métricas del proyecto (ver la cabecera de cada script)
 - Locators **solo por rol o `data-test`**; nunca CSS ni XPath.
 - Los Page Objects agrupan acciones y locators; las verificaciones quedan en los tests.
 - El producto de prueba (hoy Bolt Cutters) está en `tests/data/product.ts`.
+- `tests/seed.spec.ts` es la plantilla vacía que usan los agentes de Playwright para generar tests. No es un
+  test real: en CI no se ejecuta (`testIgnore` en `playwright.config.ts`), así que la suite del CI son 9 tests.
+  En local sigue disponible para los agentes.
 
 ## Efectos en el sitio demo y límites
 
