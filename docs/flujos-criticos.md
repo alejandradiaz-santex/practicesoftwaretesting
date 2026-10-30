@@ -1,6 +1,6 @@
 # Flujos críticos de Toolshop
 
-**Última revisión:** 2026-10-27
+**Última revisión:** 2026-10-29
 **Sitio:** https://practicesoftwaretesting.com
 
 ## Cómo se mide
@@ -30,7 +30,7 @@ flujos críticos con al menos un test que pasa / flujos críticos definidos × 1
 | 12 | Eliminar un producto y carrito con varios productos | Sin cobertura | — | BUG-003: el botón no tiene `data-test` |
 | 13 | Cuenta de usuario (perfil, historial, cambio y recuperación de contraseña) | Sin cobertura | — | |
 | 14 | Registro negativo (email duplicado, contraseña débil) | Sin cobertura | — | |
-| 15 | Formulario de contacto | Sin cobertura | — | 5 de 6 campos obligatorios; el adjunto es opcional (comprobado el 2026-10-27) |
+| 15 | Formulario de contacto | Cubierto | TC-009 | Un envío real por ejecución (crea un mensaje en el sitio demo); 5 de 6 campos obligatorios, el adjunto es opcional |
 
 ## Fuera del cálculo
 
@@ -44,10 +44,11 @@ flujos críticos con al menos un test que pasa / flujos críticos definidos × 1
 
 ## Resultado
 
-**8 de 15 flujos cubiertos (53%)**
+**9 de 15 flujos cubiertos (60%)**
 
 ## Historial de cambios de la lista
 
 | Fecha | Cambio |
 |---|---|
 | 2026-10-27 | Lista inicial de 15 flujos. Paginación y rutas protegidas fuera del cálculo. Flujo 11 definido como Buy Now Pay Later; tarjeta, transferencia y gift card fuera del cálculo. Se añade el formulario de contacto (flujo 15) |
+| 2026-10-29 | El flujo 15 (formulario de contacto) pasa a cubierto por TC-009 |

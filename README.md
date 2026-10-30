@@ -16,10 +16,11 @@ para practicar testing.
 | TC-006 | Ordenar por precio muestra el orden correcto | `tests/QATES/tc-006-ordenar-por-precio.spec.ts` |
 | TC-007 | Login con credenciales inválidas es rechazado | `tests/QATES/tc-007-login-invalido.spec.ts` |
 | TC-008 | Tarjeta, ficha y API muestran el mismo nombre y precio | `tests/QATES/tc-008-tarjeta-ficha-api.spec.ts` |
+| TC-009 | Formulario de contacto: validación y envío válido | `tests/QATES/tc-009-formulario-contacto.spec.ts` |
 
-TC-001 a TC-005 están en `tests/Critical Cases/`; TC-006 a TC-008 los generó QATES y están en `tests/QATES/`.
+TC-001 a TC-005 están en `tests/Critical Cases/`; TC-006 a TC-009 los generó QATES y están en `tests/QATES/`.
 
-El diseño de los ocho casos está en [casos-automatizacion.md](casos-automatizacion.md) y el plan detallado
+El diseño de los nueve casos está en [casos-automatizacion.md](casos-automatizacion.md) y el plan detallado
 de TC-001 a TC-005, con los hallazgos de la exploración del sitio, en [specs/checkout.md](specs/checkout.md).
 
 ## Requisitos
@@ -58,7 +59,7 @@ Otras formas:
 
 ```bash
 npx playwright test "tests/Critical Cases"        # solo TC-001 a TC-005
-npx playwright test --grep @qates                  # solo los generados por QATES (TC-006 a TC-008)
+npx playwright test --grep @qates                  # solo los generados por QATES (TC-006 a TC-009)
 npx playwright test "tc-003"                       # un test
 npx playwright test --project=firefox              # un navegador (chromium, firefox o webkit)
 npx playwright show-report                         # abrir el reporte HTML
@@ -81,6 +82,7 @@ Están versionados en `tests/data/` y no contienen datos reales ni secretos:
 - `product.ts`: producto de prueba y formato de dinero.
 - `usuarios.ts`: guest, dirección de Argentina (la que el sitio autocompleta) y perfil del registro de TC-002.
 - `busqueda.ts`: término de búsqueda y categoría de TC-004.
+- `contacto.ts`: datos del formulario de contacto de TC-009, el borde de longitud del mensaje y los emails inválidos.
 - `trazabilidad.json`: por cada TC, su título no técnico, el flujo crítico que protege, su severidad, sus archivos de datos y los textos del template de bug (precondiciones, esperado, usuario, valores, registros, a quién afecta). Lo lee el reporte de CI.
 
 El email del registro y la contraseña se generan en cada ejecución, así que no hay nada que cargar a mano.
@@ -90,9 +92,9 @@ El email del registro y la contraseña se generan en cada ejecución, así que n
 ```
 tests/
   Critical Cases/   TC-001 a TC-005
-  QATES/            TC-006 a TC-008, generados por QATES ([QATES] en el título y etiqueta @qates)
+  QATES/            TC-006 a TC-009, generados por QATES ([QATES] en el título y etiqueta @qates)
   pages/            Page Objects (CatalogPage, CheckoutPage)
-  data/             datos de prueba versionados (product.ts, usuarios.ts, busqueda.ts, trazabilidad.json)
+  data/             datos de prueba versionados (product.ts, usuarios.ts, busqueda.ts, contacto.ts, trazabilidad.json)
   agregar-producto-al-carrito.spec.ts
 specs/              planes de prueba
 docs/               guías y reportes de bugs
@@ -112,7 +114,8 @@ scripts/metricas/   métricas del proyecto (ver la cabecera de cada script)
 
 ## Efectos en el sitio demo y límites
 
-- **TC-001 crea una orden** y **TC-002 crea una cuenta** en cada ejecución; TC-003 a TC-008 no crean
+- **TC-001 crea una orden**, **TC-002 crea una cuenta** y **TC-009 crea un mensaje de contacto** en cada
+  ejecución, y el CI las repite en cada pull request y en cada push a `main`. TC-003 a TC-008 no crean
   datos. TC-007 escribe una contraseña ficticia en el login: es un intento fallido, no crea cuenta
   ni sesión.
 - El stock de los productos es finito: TC-001 consume una unidad por ejecución.
@@ -206,7 +209,7 @@ Se usaron dos conjuntos de agentes.
 
 **Agentes de Playwright** (`.claude/agents/`):
 
-- **planner:** exploró el sitio y armó el plan de `specs/checkout.md`.
+- **planner:** exploró el sitio y armó el plan de `specs/checkout.md`; también exploró el formulario de contacto (`specs/contact.md`).
 - **generator:** generó los tests de `tests/Critical Cases/` a partir de ese plan.
 - **healer:** corrió los tests que fallaban y los corrigió.
 
@@ -219,7 +222,8 @@ Se usaron dos conjuntos de agentes.
 **Agentes de QATES:**
 
 - **`qa-analyst`:** propuso los casos críticos iniciales (TC-001 a TC-005, que luego se ajustaron) y los tres casos nuevos (TC-006 a TC-008).
-- **`qa-automator`:** automatizó TC-006 a TC-008 en `tests/QATES/`. Esos tests se reconocen por la carpeta, el comentario inicial `// Generado por QATES`, el prefijo `[QATES]` en el título y la etiqueta `@qates`.
+- **`qa-test-designer`:** diseñó TC-009 (formulario de contacto) y sus casos de borde a partir de la exploración del planner.
+- **`qa-automator`:** automatizó TC-006 a TC-009 en `tests/QATES/`. Esos tests se reconocen por la carpeta, el comentario inicial `// Generado por QATES`, el prefijo `[QATES]` en el título y la etiqueta `@qates`.
 
 ## Créditos
 
