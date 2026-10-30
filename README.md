@@ -93,7 +93,7 @@ El email del registro y la contraseña se generan en cada ejecución, así que n
 tests/
   Critical Cases/   TC-001 a TC-005
   QATES/            TC-006 a TC-009, generados por QATES ([QATES] en el título y etiqueta @qates)
-  pages/            Page Objects (CatalogPage, CheckoutPage)
+  pages/            Page Objects (CatalogPage, CheckoutPage, ContactPage)
   data/             datos de prueba versionados (product.ts, usuarios.ts, busqueda.ts, contacto.ts, trazabilidad.json)
   agregar-producto-al-carrito.spec.ts
 specs/              planes de prueba
