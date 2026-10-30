@@ -109,8 +109,10 @@ scripts/metricas/   métricas del proyecto (ver la cabecera de cada script)
 - Los Page Objects agrupan acciones y locators; las verificaciones quedan en los tests.
 - El producto de prueba (hoy Bolt Cutters) está en `tests/data/product.ts`.
 - `tests/seed.spec.ts` es la plantilla vacía que usan los agentes de Playwright para generar tests. No es un
-  test real: en CI no se ejecuta (`testIgnore` en `playwright.config.ts`), así que la suite del CI son 9 tests.
-  En local sigue disponible para los agentes.
+  test real: en CI no se ejecuta (`testIgnore` en `playwright.config.ts`). En local sigue disponible para los
+  agentes.
+- `tests/agregar-producto-al-carrito.spec.ts` es una prueba de práctica, no un caso (no tiene `TC-###`): tampoco
+  se ejecuta en CI. Por eso la suite del CI son los 9 casos, TC-001 a TC-009. En local se sigue pudiendo correr.
 
 ## Efectos en el sitio demo y límites
 

@@ -13,10 +13,10 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
  */
 export default defineConfig({
   testDir: './tests',
-  /* seed.spec.ts es la plantilla vacía de los agentes de Playwright: no es un test real y no debe contar en el
-     CI. Solo se ignora en CI: en local los agentes lo siguen ejecutando por su nombre (con testIgnore fijo no se
-     podría ni pidiéndolo explícitamente). */
-  testIgnore: process.env.CI ? 'seed.spec.ts' : undefined,
+  /* En CI no cuentan como tests: seed.spec.ts (plantilla vacía de los agentes de Playwright) y
+     agregar-producto-al-carrito.spec.ts (prueba de práctica, no es un caso TC). Solo se ignoran en CI: en local se
+     siguen ejecutando por su nombre (con testIgnore fijo no se podría ni pidiéndolos explícitamente). */
+  testIgnore: process.env.CI ? ['seed.spec.ts', 'agregar-producto-al-carrito.spec.ts'] : undefined,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
