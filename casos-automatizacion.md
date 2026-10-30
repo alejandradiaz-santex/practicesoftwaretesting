@@ -14,8 +14,9 @@ Este documento contiene el diseño de los casos de prueba críticos y el estado 
 | **TC-006** | Ordenar por precio muestra el orden correcto | UI + API Check (petición de `/products`) | Playwright + TS | `tests/QATES/tc-006-ordenar-por-precio.spec.ts` | ✅ Automatizado (QATES) |
 | **TC-007** | Login con credenciales inválidas es rechazado | UI + API Check (login, Negativo) | Playwright + TS | `tests/QATES/tc-007-login-invalido.spec.ts` | ✅ Automatizado (QATES) |
 | **TC-008** | Tarjeta, ficha y API muestran el mismo nombre y precio | UI + API Check (`/products/{id}`) | Playwright + TS | `tests/QATES/tc-008-tarjeta-ficha-api.spec.ts` | ✅ Automatizado (QATES) |
+| **TC-009** | Formulario de contacto: validación y envío válido | UI + API Check (`POST /messages`) | Playwright + TS | `tests/QATES/tc-009-formulario-contacto.spec.ts` | ✅ Automatizado (QATES) |
 
-Los tests TC-001 a TC-005 están en `tests/Critical Cases/` y los generados por QATES (TC-006 a TC-008) en `tests/QATES/`; el plan detallado de TC-001 a TC-005 está en `specs/checkout.md`.
+Los tests TC-001 a TC-005 están en `tests/Critical Cases/` y los generados por QATES (TC-006 a TC-009) en `tests/QATES/`; el plan detallado de TC-001 a TC-005 está en `specs/checkout.md`.
 
 ---
 
@@ -130,3 +131,34 @@ Los tests TC-001 a TC-005 están en `tests/Critical Cases/` y los generados por 
   4. Pedir `GET /products/<id>` a la API.
   5. Comparar las tres fuentes; el precio se compara como número, sin el `$`.
 - **Esperado:** el nombre y el precio de la ficha son iguales a los de la tarjeta, y la API responde 200 con el mismo nombre y el mismo precio.
+
+### TC-009: Formulario de contacto: validación y envío válido
+- **Descripción:** validar que el formulario de contacto muestre sus campos y opciones, bloquee los envíos inválidos (campos vacíos, email mal formado, mensaje corto) sin llamar a la API, y envíe un mensaje válido una sola vez.
+- **Precondiciones:** sin sesión iniciada (contexto nuevo), en `/contact`. El sitio es compartido: cada envío válido crea un mensaje, así que el test envía una sola vez por ejecución, siempre al final.
+- **Datos:** ficticios: first-name `Prueba`, last-name `QA`, email `qa.prueba@example.com`, subject `Customer service` y, para el envío, un message de exactamente 50 caracteres. Borde del mensaje: 49 y 50 caracteres. Emails inválidos: `correo-sin-arroba` y `a b@example.com`. No se adjunta ningún archivo.
+- **Pasos:**
+  - **Parte A, estructura y validación (sin enviar):**
+    1. Abrir `/contact` y verificar título, campos, etiquetas, botón Send y el texto de ayuda del adjunto.
+    2. Leer las opciones de Subject.
+    3. Verificar que el input de adjunto acepta solo `.txt` y no es múltiple (sin adjuntar nada).
+    4. Pulsar Send con el formulario vacío.
+    5. Rellenar los cinco campos obligatorios con datos válidos y salir del campo mensaje.
+    6. Por cada campo obligatorio (first-name, last-name, email, subject, message): dejarlo vacío con los demás válidos y pulsar Send.
+  - **Parte B, formato de email y longitud del mensaje (sin enviar):**
+    1. Con los demás campos válidos, escribir `correo-sin-arroba` en email y pulsar Send.
+    2. Repetir con `a b@example.com`.
+    3. Escribir 49 caracteres en message, salir del campo y pulsar Send.
+    4. Con los demás campos vacíos, escribir 50 caracteres en message, salir del campo y pulsar Send (borde válido sin consumir el envío).
+  - **Parte C, envío válido:**
+    1. Con todos los campos válidos y un mensaje de exactamente 50 caracteres, pulsar Send una sola vez y esperar la respuesta de `POST /messages`.
+- **Esperado:**
+  - **Parte A, paso 1:** título "Contact Us - Practice Software Testing - Toolshop - v5.0"; existen first-name, last-name, email, subject, message, attachment y el botón Send; etiquetas First name, Last name, Email address, Subject, "Message *" y Attachment; ayuda "Only files with the txt extension are allowed, and files must be 0kb."
+  - **Paso 2:** opciones en orden: "Select a subject *" (valor vacío), Customer service, Webmaster, Return, Payments, Warranty, Status of my order.
+  - **Paso 3:** `accept=".txt"` y sin atributo `multiple`.
+  - **Paso 4:** no se envía ninguna petición a `/messages`; aparecen los cinco mensajes ("First name is required", "Last name is required", "Email is required", "Subject is required", "Message is required") y no hay mensaje de éxito.
+  - **Paso 5:** los cinco mensajes desaparecen.
+  - **Paso 6:** aparece solo el mensaje del campo vacío y no se envía ninguna petición a `/messages`.
+  - **Parte B, pasos 1 y 2:** error de formato de email ("Email format is invalid", texto por confirmar) y ninguna petición a `/messages`.
+  - **Paso 3:** error de longitud mínima ("Message must be minimal 50 characters", texto por confirmar) y ninguna petición a `/messages`.
+  - **Paso 4:** `message-error` ausente, los otros cuatro errores visibles y ninguna petición a `/messages`.
+  - **Parte C:** `POST /messages` responde 200; aparece "Thanks for your message! We will contact you shortly."; el formulario deja de mostrarse. Los 401 de `GET /users/me` se ignoran.

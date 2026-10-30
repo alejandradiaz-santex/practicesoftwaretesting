@@ -94,5 +94,19 @@
     "valores": "ninguno (solo lectura)",
     "registros": "ninguno: no crea pedidos ni cuentas",
     "afecta": "visitantes que consultan el detalle de un producto"
+  },
+  "TC-009": {
+    "titulo": "[Contacto] El formulario de contacto no valida los datos como se espera o no envía el mensaje",
+    "flujo": "15 · Formulario de contacto",
+    "severidad": "Media",
+    "datos": [
+      "tests/data/contacto.ts"
+    ],
+    "precondiciones": "sin sesión iniciada, en `/contact`",
+    "esperado": "los campos obligatorios vacíos o inválidos muestran su error y no se envía nada; con datos válidos el servidor responde 200 y la pantalla muestra \"Thanks for your message! We will contact you shortly.\"",
+    "usuario": "visitante sin sesión / sin rol",
+    "valores": "nombre Prueba QA, email qa.prueba@example.com, asunto Customer service y un mensaje de 50 caracteres; también campos vacíos, emails inválidos y un mensaje de 49 caracteres",
+    "registros": "crea un mensaje de contacto en el sitio demo (una vez por ejecución)",
+    "afecta": "visitantes que quieren escribir al sitio"
   }
 }
